@@ -9,8 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        android:id="@+id/content_tongue"
-        layout="@layout/app_bar_tongue"
+        layout="@layout/app_bar_voice"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -10,28 +10,37 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/launcher"
-        android:supportsRtl="true"
         android:label="@string/app_name"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.a111.myapplication.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.a111.myapplication.tongue"
+            android:name=".tongue"
             android:label="察舌观色"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.example.a111.myapplication.RegisterActivity"
-            android:label="注册"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:name=".RegisterActivity"
+            android:label="注册" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".voice"
+            android:label="@string/title_activity_voice"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

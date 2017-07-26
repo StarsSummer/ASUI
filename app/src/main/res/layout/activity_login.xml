@@ -56,7 +56,7 @@
                         android:id="@+id/email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Usernamel"
+                        android:hint="Username"
                         android:textColor="#ffffff"
                         android:inputType="textPersonName"
                         android:maxLines="1"

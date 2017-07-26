@@ -27,4 +27,5 @@
     <string name="title_activity_register">Sign in</string>
     <item name="visible" type="id"></item>
     <item name="masked" type="id"></item>
+    <string name="title_activity_voice">voice</string>
 </resources>
