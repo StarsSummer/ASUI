@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -17,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout ll;
     private FragmentManager fm;
     private List<Fragment> fms;
-
+    private TextView bartitle;
 
     private List<Title> titles=new ArrayList<Title>();
     private ArrayAdapter<String> adapter;
@@ -58,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
         listview.setAdapter(adapter);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        bartitle=(TextView) findViewById(R.id.bar_title);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+
         dl = (DrawerLayout) findViewById(R.id.activity_main);
         fl = (FrameLayout) findViewById(R.id.Content);
         ll = (LinearLayout) findViewById(R.id.drawer);
@@ -94,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         dl.addDrawerListener(abdt);
 
         initFragments();
+        fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
+        bartitle.setText("个人中心");
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,24 +112,35 @@ public class MainActivity extends AppCompatActivity {
                 switch (position){
                     case 0:
                         fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
+                        bartitle.setText("个人中心");
                         dl.closeDrawer(ll);
                         break;
                     case 1:
                         fm.beginTransaction().replace(R.id.Content,fms.get(1),"t1").commit();
+                        bartitle.setText("察舌观色");
                         dl.closeDrawer(ll);
                         break;
                     case 2:
-                        break;
-                    case 3:
                         fm.beginTransaction().replace(R.id.Content,fms.get(2),"t2").commit();
+                        bartitle.setText("辨晓经脉");
                         dl.closeDrawer(ll);
                         break;
+                    case 3:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
+                        bartitle.setText("听息断形");
+                        dl.closeDrawer(ll);
+                        break;
+                    /*
                     case 4:
+                        bartitle.setText("方案推荐");
                         break;
                     case 5:
+                        bartitle.setText("分享交流");
                         break;
                     case 6:
+                        bartitle.setText("循症疑难");
                         break;
+                        */
                 }
             }
         });
@@ -151,9 +172,26 @@ public class MainActivity extends AppCompatActivity {
         fms.add(centerFragment);
         TongueFrag tonguefragment=new TongueFrag();
         fms.add(tonguefragment);
+        HeartFrag heartFragment =new HeartFrag();
+        fms.add(heartFragment);
         VoiceFrag voicefragment=new VoiceFrag();
         fms.add(voicefragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+        return true;
+    }
+    private Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener(){
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem){
+            switch (menuItem.getItemId()){
+                case R.id.settings:
+                    Toast.makeText(MainActivity.this,"settings",Toast.LENGTH_LONG).show();
+            }
+            return true;
+        }
+    };
 }

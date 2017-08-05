@@ -186,7 +186,9 @@
             <CalendarView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:shownWeekCount="4"
+                android:shownWeekCount="5"
+                android:weekDayTextAppearance="@android:style/TextAppearance.Small.Inverse"
+                android:dateTextAppearance="@android:style/TextAppearance.Small.Inverse"
                 android:background="#25ffffff">
             </CalendarView>
             <Button
@@ -204,5 +206,5 @@
         </LinearLayout>
     </ScrollView>
 
-    
+
 </RelativeLayout>
