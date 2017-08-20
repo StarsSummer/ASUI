@@ -20,7 +20,9 @@ public class Title {
     public int getImageid(){
         return imageid;
     }
-    public int getColor(){
-        return colorid;
+    public int getColor(){return colorid;}
+    public void setColor(int colorid){
+        this.colorid=colorid;
     }
+
 }

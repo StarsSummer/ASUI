@@ -1,17 +1,22 @@
 package com.example.a111.myapplication;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +29,7 @@ import com.google.android.gms.common.images.ImageManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.Permission;
 import java.util.jar.Manifest;
 
 /**
@@ -33,17 +39,17 @@ import java.util.jar.Manifest;
 public class TongueFrag extends Fragment{
 
     private View view;
-    Activity mactivity;
-    public static final int TAKE_PHOTO=1;
-    private Uri imageUri;
-    private ImageView photo;
     private ImageView subt;
+
+    public static final int TAKE_PHOTO=1;
+    private ImageView picture;
+    private Uri imageUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saveInstanceState){
         view=inflater.inflate(R.layout.content_tongue,container,false);
-        photo=(ImageView)view.findViewById(R.id.imageView5);
+        picture=(ImageView)view.findViewById(R.id.imageView5);
         subt=(ImageView)view.findViewById(R.id.imageView6);
         return view;
     }
@@ -51,29 +57,36 @@ public class TongueFrag extends Fragment{
     @Override
     public void onActivityCreated(final Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File tonimg =new File(Environment.getExternalStorageDirectory(),"tongue.jpg");
-                try{
-                    if(tonimg.exists()){
-                        tonimg.delete();
-                    }
-                    tonimg.createNewFile();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getActivity(),"启动相机...",Toast.LENGTH_LONG).show();
-                imageUri=Uri.fromFile(tonimg);
-                Intent intent =new Intent("android.media.action.IMAGE_CAPTURE");
-                //getActivity().startActivity(intent);
-            }
-        });
         subt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(),"图片已保存，解析中...",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        picture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File outputImage =new File(getActivity().getExternalCacheDir(),"tongue_image.jpg");
+                try {
+                    if (!outputImage.getParentFile().exists())
+                        outputImage.getParentFile().mkdirs();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                Intent intent =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+                    imageUri=FileProvider.getUriForFile(getActivity(),"com.example.a111.myapplication.fileprovider",outputImage);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                }else {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(outputImage));
+                }
+                try{
+                    startActivityForResult(intent,TAKE_PHOTO);
+                }catch (ActivityNotFoundException an){
+                    an.printStackTrace();
+                }
             }
         });
     }
@@ -81,15 +94,19 @@ public class TongueFrag extends Fragment{
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==Activity.RESULT_OK){
-            switch (requestCode){
-                case TAKE_PHOTO:
-                    Bitmap bitmap=BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/tongue.jpg");
-                    bitmap.recycle();
-                    break;
-                default:
-                    break;
-            }
+        switch (requestCode){
+            case TAKE_PHOTO:
+                if(resultCode==getActivity().RESULT_OK){
+                    try{
+                        Bitmap bitmap =BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri));
+                        picture.setImageBitmap(bitmap);
+                    }catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
