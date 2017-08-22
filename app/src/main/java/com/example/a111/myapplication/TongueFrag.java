@@ -21,6 +21,7 @@ import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -74,7 +75,6 @@ public class TongueFrag extends Fragment{
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
                 Intent intent =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
                     imageUri=FileProvider.getUriForFile(getActivity(),"com.example.a111.myapplication.fileprovider",outputImage);
@@ -83,6 +83,10 @@ public class TongueFrag extends Fragment{
                     intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(outputImage));
                 }
                 try{
+
+                    AlphaAnimation anim_alpha = new AlphaAnimation(0,1);
+                    anim_alpha.setDuration(2000);
+                    v.setAnimation(anim_alpha);
                     startActivityForResult(intent,TAKE_PHOTO);
                 }catch (ActivityNotFoundException an){
                     an.printStackTrace();

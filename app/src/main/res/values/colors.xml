@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_white">#FFFFFF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="btn_normal">#FFFFFF</color>
+    <color name="btn_press">#66000000</color>
 </resources>

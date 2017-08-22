@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -109,26 +111,42 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Title title=titles.get(position);
+
+                AlphaAnimation anim_alpha = new AlphaAnimation(1,0);
+                anim_alpha.setDuration(300);
+                anim_alpha.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        dl.closeDrawer(ll);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                view.setAnimation(anim_alpha);
                 switch (position){
                     case 0:
                         fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
                         bartitle.setText("个人中心");
-                        dl.closeDrawer(ll);
                         break;
                     case 1:
                         fm.beginTransaction().replace(R.id.Content,fms.get(1),"t1").commit();
                         bartitle.setText("察舌观色");
-                        dl.closeDrawer(ll);
                         break;
                     case 2:
                         fm.beginTransaction().replace(R.id.Content,fms.get(2),"t2").commit();
                         bartitle.setText("辨晓经脉");
-                        dl.closeDrawer(ll);
                         break;
                     case 3:
                         fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
                         bartitle.setText("听息断形");
-                        dl.closeDrawer(ll);
                         break;
                     /*
                     case 4:
@@ -189,7 +207,8 @@ public class MainActivity extends AppCompatActivity {
         public boolean onMenuItemClick(MenuItem menuItem){
             switch (menuItem.getItemId()){
                 case R.id.settings:
-                    Toast.makeText(MainActivity.this,"settings",Toast.LENGTH_LONG).show();
+                    Intent set =new Intent(MainActivity.this,SettingActivity.class);
+                    startActivity(set);
             }
             return true;
         }
