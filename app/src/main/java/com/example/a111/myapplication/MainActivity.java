@@ -148,10 +148,12 @@ public class MainActivity extends AppCompatActivity {
                         fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
                         bartitle.setText("听息断形");
                         break;
-                    /*
+
                     case 4:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(4),"t4").commit();
                         bartitle.setText("方案推荐");
                         break;
+                    /*
                     case 5:
                         bartitle.setText("分享交流");
                         break;
@@ -194,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
         fms.add(heartFragment);
         VoiceFrag voicefragment=new VoiceFrag();
         fms.add(voicefragment);
+        FoodFrag foodFragment=new FoodFrag();
+        fms.add(foodFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }
 
