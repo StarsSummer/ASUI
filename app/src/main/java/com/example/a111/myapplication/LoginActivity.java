@@ -33,14 +33,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import testjson.HttpClient;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -122,6 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
 
@@ -209,16 +214,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
         */
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            Toast.makeText(this,"start login",Toast.LENGTH_SHORT).show();
+            mAuthTask = new UserLoginTask(mEmailView.getText().toString(),mPasswordView.getText().toString());
+            mAuthTask.execute();
         }
 
     }
@@ -363,45 +367,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
 
         private final String mEmail;
         private final String mPassword;
-
+        //http client for sign in
+        private HttpClient httpClient ;
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            httpClient = new HttpClient();
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
+        @Override
+        protected Integer doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+            int userCode = -1;
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                 userCode = httpClient.login(mEmail, mPassword);
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+          /*  for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }
+            }*/
 
             // TODO: register the new account here.
-            return true;
+            return userCode;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Integer userCode) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (userCode != -1) {
+                // Show a progress spinner, and kick off a background task to
+                // perform the user login attempt.
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("code",userCode);
+                startActivity(intent);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

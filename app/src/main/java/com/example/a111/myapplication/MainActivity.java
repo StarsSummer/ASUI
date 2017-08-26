@@ -32,6 +32,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
+import testjson.Connection;
+import testjson.HttpClient;
+
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout dl;
     private FrameLayout fl;
@@ -43,13 +46,17 @@ public class MainActivity extends AppCompatActivity {
     private List<Title> titles=new ArrayList<Title>();
     private ArrayAdapter<String> adapter;
     private String title;
+    // code generate from server
+    int userCode = getIntent().getIntExtra("code",-1);
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-
-
+    //http client
+    private HttpClient httpClient;
+    //login connection
+    Connection connection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,8 +169,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
+        this.httpClient= new HttpClient();
+        connection = httpClient.connectionInit(userCode);
     }
 
     private void initTitles(){
