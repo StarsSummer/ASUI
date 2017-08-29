@@ -1,40 +1,24 @@
 package com.example.a111.myapplication;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import pojo.User;
+import testjson.HttpClient;
+import testjson.SignUpException;
 
 /**
  * A login screen that offers login via email/password.
@@ -54,6 +38,16 @@ public class RegisterActivity extends AppCompatActivity  {
             "foo@example.com:hello", "bar@example.com:world"
     };
 
+    //components of activity_register
+    private TextView userNameView;
+    private RadioGroup sex;
+    private RadioButton male;
+    private RadioButton female;
+    private TextView emailView;
+    private TextView phoneNumView;
+    private TextView passwordView;
+    //child thread
+    private UserRegisterTask newTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +64,78 @@ public class RegisterActivity extends AppCompatActivity  {
                 startActivity(reged);
             }
         });
+        // init components
+        phoneNumView = (TextView) findViewById(R.id.password);
+        passwordView = (TextView) findViewById(R.id.password);
+
+    }
+    private void register(){
+
     }
 
+    public class UserRegisterTask extends AsyncTask<User, Void, Character> {
 
+        private String phonenum;
+        private String password;
+
+        //http client for sign in
+        private HttpClient httpClient ;
+        UserRegisterTask(String phoneNum, String password) {
+            this.phonenum = phoneNum;
+            this.password = password;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            httpClient = new HttpClient();
+        }
+
+        @Override
+        protected Character doInBackground(User ... params) {
+            // TODO: attempt authentication against a network service.
+            char status = 2;
+            try {
+                status = httpClient.normalUserSignUp(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SignUpException e) {
+                e.printStackTrace();
+            }
+
+          /*  for (String credential : DUMMY_CREDENTIALS) {
+                String[] pieces = credential.split(":");
+                if (pieces[0].equals(mEmail)) {
+                    // Account exists, return true if the password matches.
+                    return pieces[1].equals(mPassword);
+                }
+            }*/
+
+            // TODO: register the new account here.
+            return new Character(status);
+        }
+
+        @Override
+        protected void onPostExecute(Character registerStatus) {
+            newTask = null;
+           // showProgress(false);
+
+            if (registerStatus != -1) {
+                // Show a progress spinner, and kick off a background task to
+                // perform the user login attempt.
+                Intent reged =new Intent(RegisterActivity.this,LoginActivity.class);
+                startActivity(reged);
+                finish();
+            } else {
+                //mPasswordView.setError(getString(R.string.error_incorrect_password));
+                //mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            newTask = null;
+            //showProgress(false);
+        }
+    }
 }
 
