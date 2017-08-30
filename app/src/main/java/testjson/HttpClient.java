@@ -4,12 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -31,7 +38,12 @@ public class HttpClient {
     MediaType MEDIA_TYPE_TEXT = MediaType.parse("text/plain");
     MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
-    String url;
+    //address
+    String ip = "[2001:da8:215:c658:3950:f92d:e1ca:8ed8]";
+    String port = "8080";
+    String projectname = "caffe";
+    //find user in database"
+
     OkHttpClient client;
     WebSocket webSocket;
     Gson gson;
@@ -46,13 +58,11 @@ public class HttpClient {
     //login
     public int login(String phonenum,String password) throws IOException {
         int code;
-        //url of server
-        url = "http://[2001:da8:215:c658:3950:f92d:e1ca:8ed8]:8080/caffe/Login";
         //find user in database
         hql = "from User as user where user.userAccount='"+phonenum+"' and user.password='"+password+"'";
         System.out.println(hql);
         Request request = new Request.Builder()
-                .url(url)
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/Login")//url of server
                 .post(RequestBody.create(MEDIA_TYPE_TEXT,hql))
                 .build();
         Response response;
@@ -65,10 +75,9 @@ public class HttpClient {
     public char normalUserSignUp(User user) throws IOException, SignUpException {
         // 0 is false 1 is ready
         char signUpStatues;
-        url = "http://[2001:da8:215:c658:3950:f92d:e1ca:8ed8]:8080/caffe/Registion";
 
         Request request = new Request.Builder()
-                .url(url)
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/Registion")//url of server
                 .post(RequestBody.create(MEDIA_TYPE_JSON,gson.toJson(user)))
                 .build();
         Response response;
@@ -95,15 +104,18 @@ public class HttpClient {
         return data;
     }*/
     public String tougunJudge(int userCode,String path) throws IOException {
-        url = "http://[2001:da8:215:c658:3950:f92d:e1ca:8ed8]:8080/caffe/TongueAnalysis";
+
         File image = new File(path);
+        Date date = new Date();
+        //cover with json
+        String dgson = gson.toJson(date);
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         RequestBody fileBody = RequestBody.create(MEDIA_TYPE_JPG, image);
         builder.addFormDataPart("uploadfile", image.getName(), fileBody);
         builder.addFormDataPart("code", Integer.toString(userCode));
-        builder.addFormDataPart("time",new Date().toString());
+        builder.addFormDataPart("time",dgson);
         Request request = new Request.Builder()
-                .url(url)
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/TongueAnalysis")//url of server
                 .post(builder.build())
                 .build();
         Response response;
@@ -115,15 +127,24 @@ public class HttpClient {
     }
     public Connection connectionInit(int code){
         ChatWebSocketListener listener = new ChatWebSocketListener(code);
-        url = "ws://[2001:da8:215:c658:3950:f92d:e1ca:8ed8]:8080/caffe/Chat";
-        String url1 = "ws://echo.websocket.org";
         Request request = new Request.Builder()
-                .url(url)
+                .url("ws://" +  ip + ":" + port + "/" + projectname + "/Chat")//url of server
                 .build();
         webSocket = client.newWebSocket(request, listener);
 
         return new Connection(webSocket);
     }
-
+    public <T> List<T> Query(String hql, Class<T> clazz) throws IOException {
+        Request request = new Request.Builder()
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/Query")//url of server
+                .post(RequestBody.create(MEDIA_TYPE_TEXT,hql))
+                .build();
+        Response response;
+        response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+        Type type = new TypeToken<List<T>>(){}.getType();
+        List<T> result = gson.fromJson(response.body().charStream() , type);
+        return result;
+    }
 
 }

@@ -193,14 +193,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFragments(){
+        Bundle bundle = new Bundle();
+        bundle.putInt("code",userCode);
         CenterFrag centerFragment =new CenterFrag();
+        //send userCode
+        centerFragment.setArguments(bundle);
         fms.add(centerFragment);
-        TongueFrag tonguefragment=new TongueFrag();
-        fms.add(tonguefragment);
+        TongueFrag tongueFragment=new TongueFrag();
+        tongueFragment.setArguments(bundle);
+        fms.add(tongueFragment);
         HeartFrag heartFragment =new HeartFrag();
+        heartFragment.setArguments(bundle);
         fms.add(heartFragment);
-        VoiceFrag voicefragment=new VoiceFrag();
-        fms.add(voicefragment);
+        VoiceFrag voiceFragment=new VoiceFrag();
+        voiceFragment.setArguments(bundle);
+        fms.add(voiceFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }
 

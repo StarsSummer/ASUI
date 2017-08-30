@@ -46,12 +46,17 @@ public class TongueFrag extends Fragment{
     private ImageView picture;
     private Uri imageUri;
 
+    private int userCode;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saveInstanceState){
         view=inflater.inflate(R.layout.content_tongue,container,false);
         picture=(ImageView)view.findViewById(R.id.imageView5);
         subt=(ImageView)view.findViewById(R.id.imageView6);
+        //get userCode
+        Bundle bundle = getArguments();
+        userCode = bundle.getInt("code");
+
         return view;
     }
 

@@ -60,8 +60,10 @@ public class RegisterActivity extends AppCompatActivity  {
         registed.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent reged =new Intent(RegisterActivity.this,LoginActivity.class);
-                startActivity(reged);
+                //Intent reged =new Intent(RegisterActivity.this,LoginActivity.class);
+                //startActivity(reged);
+                newTask = new UserRegisterTask(phoneNumView.getText().toString(),passwordView.getText().toString());
+                newTask.execute(new User(0,phoneNumView.getText().toString(),"normal",passwordView.getText().toString()));
             }
         });
         // init components
