@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class ChatFrag extends Fragment{
         recyclerView.setLayoutManager(layoutManager);
         adapter=new DoctorAdapter(doctorList);
         recyclerView.setAdapter(adapter);
+        TextView headtext=(TextView)view.findViewById(R.id.headpic_text_chat);
+        headtext.setText("专业医生答疑\n值得信赖");
     }
 
     private void initdoctors(){
