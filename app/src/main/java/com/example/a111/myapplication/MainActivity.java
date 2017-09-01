@@ -156,11 +156,12 @@ public class MainActivity extends AppCompatActivity {
                     /*
                     case 5:
                         bartitle.setText("分享交流");
-                        break;
+                        break;*/
                     case 6:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(5),"t5").commit();
                         bartitle.setText("循症疑难");
                         break;
-                        */
+
                 }
             }
         });
@@ -198,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
         fms.add(voicefragment);
         FoodFrag foodFragment=new FoodFrag();
         fms.add(foodFragment);
+        ChatFrag chatFragment=new ChatFrag();
+        fms.add(chatFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }
 

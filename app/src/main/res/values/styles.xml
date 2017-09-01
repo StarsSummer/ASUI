@@ -36,7 +36,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
+    <style name="doctor">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
     <style name="base_layout">
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">match_parent</item>
