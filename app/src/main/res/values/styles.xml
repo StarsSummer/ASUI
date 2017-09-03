@@ -78,4 +78,11 @@
     <style name="mid_layout" parent="base_layout">
         <item name="android:background">@drawable/mid_layout_selector</item>
     </style>
+    <style name="btn_send">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:background">@drawable/shape_btn_send</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textColor">#6bc08b</item>
+    </style>
 </resources>
