@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sqlite.MySql;
 import testjson.HttpClient;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -369,14 +370,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
 
-        private final String mEmail;
+        private final String mPhonenum;
         private final String mPassword;
         //http client for sign in
         private HttpClient httpClient ;
+        private MySql db;
         UserLoginTask(String email, String password) {
-            mEmail = email;
+            mPhonenum = email;
             mPassword = password;
             httpClient = new HttpClient();
+            db = new MySql(LoginActivity.this);
         }
 
 
@@ -386,7 +389,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             int userCode = -1;
             try {
                 // Simulate network access.
-                 userCode = httpClient.login(mEmail, mPassword);
+                 userCode = httpClient.login(mPhonenum, mPassword);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -410,6 +413,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (userCode != -1) {
+                db.insertUser(mPhonenum, mPassword,userCode);
                 // Show a progress spinner, and kick off a background task to
                 // perform the user login attempt.
                 Intent intent=new Intent(LoginActivity.this,MainActivity.class);
