@@ -146,5 +146,31 @@ public class HttpClient {
         List<T> result = gson.fromJson(response.body().charStream() , type);
         return result;
     }
+    public char insert(Object object) throws IOException, SignUpException {
+        char signUpStatues;
+        String json;
+        if(object instanceof User){
+            json = "User;"+gson.toJson(object);
+        }else if(object instanceof PersonInfo) {
+            json = "PersonInfo;"+gson.toJson(object);
+        }else if(object instanceof HealthInfo){
+            json = "HealthInfo;"+gson.toJson(object);
+        }else if(object instanceof DoctorInformation){
+            json = "DoctorInformation;"+gson.toJson(object);
+        }else{
+            throw new SignUpException(SignUpException.Type_Wrong);
+
+        }
+        Request request = new Request.Builder()
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/Save")//url of server
+                .post(RequestBody.create(MEDIA_TYPE_JSON,json))
+                .build();
+        Response response;
+        response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new SignUpException(SignUpException.CREATE_FIAL);
+        signUpStatues = gson.fromJson(response.body().charStream(), char.class);
+        System.out.println(signUpStatues);
+        return signUpStatues;
+    }
 
 }
