@@ -155,17 +155,20 @@ public class MainActivity extends AppCompatActivity {
                         fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
                         bartitle.setText("听息断形");
                         break;
-                    /*
+
+
                     case 4:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(4),"t4").commit();
                         bartitle.setText("方案推荐");
                         break;
+                    /*
                     case 5:
                         bartitle.setText("分享交流");
-                        break;
+                        break;*/
                     case 6:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(5),"t5").commit();
                         bartitle.setText("循症疑难");
                         break;
-                        */
                 }
             }
         });
@@ -193,10 +196,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFragments(){
+        //send userCode to every fragment
         Bundle bundle = new Bundle();
         bundle.putInt("code",userCode);
+
         CenterFrag centerFragment =new CenterFrag();
-        //send userCode
         centerFragment.setArguments(bundle);
         fms.add(centerFragment);
         TongueFrag tongueFragment=new TongueFrag();
@@ -205,9 +209,15 @@ public class MainActivity extends AppCompatActivity {
         HeartFrag heartFragment =new HeartFrag();
         heartFragment.setArguments(bundle);
         fms.add(heartFragment);
-        VoiceFrag voiceFragment=new VoiceFrag();
-        voiceFragment.setArguments(bundle);
-        fms.add(voiceFragment);
+        VoiceFrag voicefragment=new VoiceFrag();
+        voicefragment.setArguments(bundle);
+        fms.add(voicefragment);
+        FoodFrag foodFragment=new FoodFrag();
+        foodFragment.setArguments(bundle);
+        fms.add(foodFragment);
+        ChatFrag chatFragment=new ChatFrag();
+        chatFragment.setArguments(bundle);
+        fms.add(chatFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }
 

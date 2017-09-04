@@ -103,6 +103,7 @@ public class TongueFrag extends Fragment{
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+
         switch (requestCode){
             case TAKE_PHOTO:
                 if(resultCode==getActivity().RESULT_OK){
