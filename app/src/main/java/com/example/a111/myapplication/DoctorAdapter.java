@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import pojo.Doctor;
+import pojo.DoctorInformation;
+
 /**
  * Created by 111 on 2017/8/25.
  */
@@ -51,7 +54,9 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
             public void onClick(View v) {
                 int positon = holder.getAdapterPosition();
                 Doctor doctor = doctorList.get(positon);
-                Toast.makeText(v.getContext(),"向"+doctor.getName()+"咨询",Toast.LENGTH_SHORT).show();
+                //TODO: 获取doctor类所有信息
+                //Toast.makeText(v.getContext(),"向"+doctor.getName()+"咨询",Toast.LENGTH_SHORT).show();
+                mContext.unbindService(MainActivity.mConnection);
                 Intent asking = new Intent(mContext,AskActivity.class);
                 mContext.startActivity(asking);
             }
@@ -62,8 +67,8 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Doctor doctor=doctorList.get(position);
-        holder.doctorname.setText(doctor.getName());
-        holder.doctorstat.setText(doctor.getStat());
+        //holder.doctorname.setText(doctor.getName());
+        holder.doctorstat.setText(doctor.getDep());
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.example.a111.myapplication;
 
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -53,13 +57,26 @@ public class MainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    //http client
-    private HttpClient httpClient;
-    //login connection
-    Connection connection;
+    //httpclient service
+    private static HttpClient httpClient = null;
+    public static ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            httpClient = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            httpClient = ((HttpClient.LocalBinder)service).getService();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        bindService(new Intent(MainActivity.this,HttpClient.class), mConnection, Service.BIND_AUTO_CREATE);
+        httpClient.connectionInit(userCode);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -172,10 +189,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        this.httpClient= new HttpClient();
-        connection = httpClient.connectionInit(userCode);
-    }
 
+
+    }
+    public static HttpClient getService(){
+        return httpClient;
+    }
     private void initTitles(){
 
         Title center=new Title("个人中心",R.drawable.ic_center,0XFF6bc08b);
@@ -196,27 +215,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFragments(){
-        //send userCode to every fragment
-        Bundle bundle = new Bundle();
-        bundle.putInt("code",userCode);
 
         CenterFrag centerFragment =new CenterFrag();
-        centerFragment.setArguments(bundle);
         fms.add(centerFragment);
         TongueFrag tongueFragment=new TongueFrag();
-        tongueFragment.setArguments(bundle);
         fms.add(tongueFragment);
         HeartFrag heartFragment =new HeartFrag();
-        heartFragment.setArguments(bundle);
         fms.add(heartFragment);
         VoiceFrag voicefragment=new VoiceFrag();
-        voicefragment.setArguments(bundle);
         fms.add(voicefragment);
         FoodFrag foodFragment=new FoodFrag();
-        foodFragment.setArguments(bundle);
         fms.add(foodFragment);
         ChatFrag chatFragment=new ChatFrag();
-        chatFragment.setArguments(bundle);
         fms.add(chatFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
     }

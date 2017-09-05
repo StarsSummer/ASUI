@@ -3,9 +3,13 @@ package com.example.a111.myapplication;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -39,11 +43,15 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import sqlite.MySql;
 import testjson.HttpClient;
 
@@ -69,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+//    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -81,7 +89,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    //httpclient service
+    HttpClient httpClient = null;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            httpClient = null;
+        }
 
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            httpClient = ((HttpClient.LocalBinder)service).getService();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View v) {
                 Intent intent_reg=new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(intent_reg);
+                unbindService(mConnection);
             }
         });
 
@@ -127,7 +148,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
+        //bind service
+        bindService(new Intent(LoginActivity.this,HttpClient.class),mConnection, Service.BIND_AUTO_CREATE);
     }
 
 
@@ -194,8 +216,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         */
-        boolean cancel = false;
-        View focusView = null;
+       // boolean cancel = false;
+       // View focusView = null;
         /*
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
@@ -216,15 +238,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         */
 
-        if (cancel) {
+       // if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
-        } else {
+            //focusView.requestFocus();
+        //} else {
             Toast.makeText(this,"start login",Toast.LENGTH_SHORT).show();
-            mAuthTask = new UserLoginTask(mEmailView.getText().toString(),mPasswordView.getText().toString());
-            mAuthTask.execute();
-        }
+//            mAuthTask = new UserLoginTask(mEmailView.getText().toString(),mPasswordView.getText().toString());
+//            mAuthTask.execute();
+            //login
+            httpClient.login(mEmailView.getText().toString(),mPasswordView.getText().toString(), new Callback()
+            {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+                    int code = new Gson().fromJson(response.body().charStream(), int.class);
+                    Toast.makeText(LoginActivity.this,code,Toast.LENGTH_SHORT).show();
+                    if (code == 0){
+                        unbindService(mConnection);
+                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+       // }
 
     }
 
@@ -368,69 +410,69 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
-
-        private final String mPhonenum;
-        private final String mPassword;
-        //http client for sign in
-        private HttpClient httpClient ;
-        private MySql db;
-        UserLoginTask(String email, String password) {
-            mPhonenum = email;
-            mPassword = password;
-            httpClient = new HttpClient();
-            db = new MySql(LoginActivity.this);
-        }
-
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            int userCode = -1;
-            try {
-                // Simulate network access.
-                 userCode = httpClient.login(mPhonenum, mPassword);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-          /*  for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
-            // TODO: register the new account here.
-            return userCode;
-        }
-
-        @Override
-        protected void onPostExecute(Integer userCode) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (userCode != -1) {
-                db.insertUser(mPhonenum, mPassword,userCode);
-                // Show a progress spinner, and kick off a background task to
-                // perform the user login attempt.
-                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                intent.putExtra("code",userCode);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
+//    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
+//
+//        private final String mPhonenum;
+//        private final String mPassword;
+//        //http client for sign in
+//        private HttpClient httpClient ;
+//        private MySql db;
+//        UserLoginTask(String email, String password) {
+//            mPhonenum = email;
+//            mPassword = password;
+//            httpClient = new HttpClient();
+//            db = new MySql(LoginActivity.this);
+//        }
+//
+//
+//        @Override
+//        protected Integer doInBackground(Void... params) {
+//            // TODO: attempt authentication against a network service.
+//            int userCode = -1;
+//            try {
+//                // Simulate network access.
+//                userCode = httpClient.login(mPhonenum, mPassword);
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//          /*  for (String credential : DUMMY_CREDENTIALS) {
+//
+//   String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }*/
+//
+//            // TODO: register the new account here.
+//            return userCode;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Integer userCode) {
+//            mAuthTask = null;
+//            showProgress(false);
+//
+//            if (userCode != -1) {
+//                db.insertUser(mPhonenum, mPassword,userCode);
+//                // Show a progress spinner, and kick off a background task to
+//                // perform the user login attempt.
+//                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+//                intent.putExtra("code",userCode);
+//                startActivity(intent);
+//                finish();
+//            } else {
+//                mPasswordView.setError(getString(R.string.error_incorrect_password));
+//                mPasswordView.requestFocus();
+//            }
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            mAuthTask = null;
+//            showProgress(false);
+//        }
+//    }
 }
 

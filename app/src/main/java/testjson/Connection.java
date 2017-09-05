@@ -8,15 +8,14 @@ import okhttp3.WebSocket;
 
 public class Connection {
     //to send message
-    private final int NORMAL_CLOSURE = 1000;
-    WebSocket webSocket;
+    private final static int NORMAL_CLOSURE = 1000;
+    private WebSocket webSocket;
     public Connection(WebSocket webSocket) {
         this.webSocket = webSocket;
     }
-    public boolean initChat(){
+    public  boolean initChat(){
         System.out.println("Connection");
         return webSocket.send("Connection");
-
     }
     public boolean selectDoctor(int doctorCode){
         return webSocket.send("Doctor:" + doctorCode);

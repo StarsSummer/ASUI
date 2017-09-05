@@ -38,7 +38,7 @@
         android:layout_height="300dp"
         android:layout_weight="0.48">
 
-        <LinearLayout
+         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                     android:inputType="textPersonName" />
 
             </LinearLayout>
-
+            <!--
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -130,7 +130,7 @@
                     android:background="#25ffffff"
                     android:layout_weight="1" />
             </LinearLayout>
-
+               -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
