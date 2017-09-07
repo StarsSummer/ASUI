@@ -66,6 +66,7 @@ public class AskActivity extends AppCompatActivity {
                 AskActivity.this.finish();
             }
         });
+
         initmsgs();
         input=(EditText) findViewById(R.id.msg_input);
         send=(Button) findViewById(R.id.msg_send);

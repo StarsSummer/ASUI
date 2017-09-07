@@ -63,6 +63,7 @@ public class HttpClient extends IntentService {
     private OkHttpClient client;
     private Gson gson;
     private String hql;
+    LocalBroadcastManager bm  = LocalBroadcastManager.getInstance(HttpClient.this);;
     private static Connection conection;
     private static int userCode;
     public HttpClient(){
@@ -97,7 +98,7 @@ public class HttpClient extends IntentService {
                 login(intent.getStringExtra("phonenum"),intent.getStringExtra("password"));
                 break;
             case 2:
-                normalUserSignUp(new User(0, intent.getStringExtra("phonenum"),"normaluser",intent.getStringExtra("password")));
+                UserSignUp(new User(0, intent.getStringExtra("phonenum"),"user",intent.getStringExtra("password")),intent.getStringExtra("userName"));
                 break;
             case 3:
                 connectionInit();
@@ -170,7 +171,6 @@ public class HttpClient extends IntentService {
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
                                                 userCode = gson.fromJson(response.body().charStream(), int.class);
-                                                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(HttpClient.this);
                                                 Intent intent = new Intent();
                                                 intent.setAction("Log_in");
                                                 intent.putExtra("code",userCode);
@@ -179,7 +179,7 @@ public class HttpClient extends IntentService {
                                         });
     }
     //User sign up
-    public void normalUserSignUp(User user) {
+    public void UserSignUp(User user, final String userName) {
         // 0 is false and 1 is ready
         char signUpStatues;
 
@@ -197,14 +197,19 @@ public class HttpClient extends IntentService {
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 if (!response.isSuccessful())  throw new IOException("Unexpected code: " + response);
-                                                char signUpStatues = gson.fromJson(response.body().charStream(), char.class);
-                                                System.out.println(signUpStatues);
+                                                userCode = gson.fromJson(response.body().charStream(), int.class);
                                                 //TODO: send Broadcast to activity
-                                                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(HttpClient.this);
                                                 Intent intent = new Intent();
-                                                intent.setAction("Register");
-                                                intent.putExtra("code",signUpStatues);
+                                                intent.setAction("REGISTER");
+                                                intent.putExtra("code",userCode);
                                                 bm.sendBroadcast(intent);
+                                                if(userCode != -1){
+                                                    try {
+                                                        insert(new PersonInfo(userCode,userName));
+                                                    } catch (SignUpException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
                                             }
                                         });
     }
@@ -347,7 +352,7 @@ public class HttpClient extends IntentService {
 //        return result;
     }
 
-    public void insert(Object object,Callback callback) throws IOException, SignUpException {
+    public void insert(Object object) throws IOException, SignUpException {
         char signUpStatues;
         String json;
         if(object instanceof User){
@@ -366,7 +371,17 @@ public class HttpClient extends IntentService {
                 .post(RequestBody.create(MEDIA_TYPE_JSON,json))
                 .build();
         //request will enqueue to send
-        client.newCall(request).enqueue(callback);
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i(logTag,"insert success");
+            }
+        });
 //        if (!response.isSuccessful()) throw new SignUpException(SignUpException.CREATE_FIAL);
 //        signUpStatues = gson.fromJson(response.body().charStream(), char.class);
 //        Log.i(logTag, signUpStatues);

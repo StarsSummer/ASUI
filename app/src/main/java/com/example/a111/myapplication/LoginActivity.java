@@ -82,47 +82,45 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-//    private UserLoginTask mAuthTask = null;
 
-    // UI references.
+    /**
+     *  UI references.
+     */
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     * request Activity code
      */
-    //private GoogleApiClient client;
-    //httpclient service
-//    HttpClient httpClient = null;
-//    private ServiceConnection mConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            //httpClient = null;
-//        }
-//
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            //httpClient = ((HttpClient.LocalBinder)service).getService();
-//        }
-//    };
+    private final int Register = 0;
+    /**
+     * application login status
+     */
+    private boolean isLogin = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //set windows to fullscreen only used when higher than sdk 19
+        setContentView(R.layout.activity_login);
+        /**
+         * set windows to fullscreen only used when higher than sdk 19
+         */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        setContentView(R.layout.activity_login);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        //register broadcast
+        /**
+         * registe broadcast
+         */
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance( this );
         MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver() ;
         IntentFilter intentFilter = new IntentFilter( "Log_in") ;
         localBroadcastManager.registerReceiver( broadcastReceiver , intentFilter );
-        // Set up the login form.
+        /**
+         * Set up the login form.
+         */
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -150,25 +148,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 Intent intent_reg=new Intent(LoginActivity.this,RegisterActivity.class);
-                startActivity(intent_reg);
+                startActivityForResult(intent_reg, Register);
 
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
     }
-    //unbind httpservice
-
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //unbindService(mConnection);
+    protected void onResume() {
+        super.onResume();
+        if (isLogin)
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode){
+            case Register:
+                Log.i("login","onresult");
+                if(resultCode == RESULT_OK)
+                    isLogin = true;
+                break;
+            default:
+                break;
+        }
     }
 
     private void populateAutoComplete() {
@@ -221,50 +228,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        /*
-        if (mAuthTask != null) {
-            return;
-        }
 
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        */
-       // boolean cancel = false;
-       // View focusView = null;
-        /*
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-        */
-
-       // if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            //focusView.requestFocus();
-        //} else {
         Toast.makeText(this,"start login",Toast.LENGTH_SHORT).show();
         Log.i("LoginActivity", "start login");
-//            mAuthTask = new UserLoginTask(mEmailView.getText().toString(),mPasswordView.getText().toString());
-//            mAuthTask.execute();
+
         //login
         Intent intent = new Intent();
         intent.setAction("intent_service");
@@ -273,8 +240,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         intent.putExtra("phonenum", mEmailView.getText().toString());
         intent.putExtra("password", mPasswordView.getText().toString());
         startService(intent);
-
-       // }
 
     }
 
@@ -285,6 +250,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String action = intent.getAction() ;
             if ( "Log_in".equals( action )){
                 Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
+                isLogin = true;
                 startActivity(nextIntent);
             }
         }

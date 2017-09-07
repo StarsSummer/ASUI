@@ -25,8 +25,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:textColor="#6bc08b"/>
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -45,8 +46,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="10dp"
-                android:textColor="#6bc08b"/>
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
         <ImageView
             android:id="@+id/right_head"

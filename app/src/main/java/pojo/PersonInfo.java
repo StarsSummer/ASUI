@@ -24,6 +24,10 @@ public class PersonInfo  implements java.io.Serializable {
     public PersonInfo(int code) {
         this.code = code;
     }
+    public PersonInfo(int code, String nickname){
+        this.code = code;
+        this.nickname = nickname;
+    }
     public PersonInfo(int code, String sex, String email, byte[] icon, Date birthDate, String nickname) {
        this.code = code;
        this.sex = sex;

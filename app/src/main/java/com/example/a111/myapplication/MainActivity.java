@@ -51,12 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Title> titles=new ArrayList<Title>();
     private ArrayAdapter<String> adapter;
     private String title;
-    // code generate from server
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    //private GoogleApiClient client;
 
 
     @Override
@@ -163,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
                         fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
                         bartitle.setText("听息断形");
                         break;
-
-
                     case 4:
                         fm.beginTransaction().replace(R.id.Content,fms.get(4),"t4").commit();
                         bartitle.setText("方案推荐");
@@ -191,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         setIntent(intent);//设置新的intent
 
     }
+
     private void initTitles(){
 
         Title center=new Title("个人中心",R.drawable.ic_center,0XFF6bc08b);

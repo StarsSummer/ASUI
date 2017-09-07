@@ -27,7 +27,7 @@ import testjson.HttpClient;
 public class ChatFrag extends Fragment{
     private View view;
     private List<Doctor> doctorList=new ArrayList<>();
-    private HttpClient httpClient;
+
     private DoctorAdapter adapter;
     RecyclerView recyclerView;
 
