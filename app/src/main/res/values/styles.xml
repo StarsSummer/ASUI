@@ -38,10 +38,11 @@
 
     <style name="RegEditText">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:ems">15</item>
+        <item name="android:textColor">@color/color_white</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_weight">1</item>
+        <item name="android:layout_weight">2</item>
     </style>
 
     <style name="doctor">
@@ -69,9 +70,15 @@
     <style name="user_settext">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
+    </style>
+    <style name="user_setselftext">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="arrow">
         <item name="android:layout_width">wrap_content</item>
@@ -92,5 +99,13 @@
         <item name="android:background">@drawable/shape_btn_send</item>
         <item name="android:layout_margin">10dp</item>
         <item name="android:textColor">#6bc08b</item>
+    </style>
+    <style name="btn_changehead">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/btn_trans</item>
+        <item name="android:textColor">@color/color_white</item>
     </style>
 </resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backimg"
+    android:orientation="vertical">
+    <include layout="@layout/toolbar"/>
+    <View style="@style/bg_line"/>
+    <FrameLayout
+        android:id="@+id/setting_setting"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:background="@color/black_overlay">
+    </FrameLayout>
+    <View style="@style/bg_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_overlay">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="15dp"
+            android:textColor="#75ffffff"
+            android:text="Presented by Wall_E"/>
+    </LinearLayout>
+</LinearLayout>
+
