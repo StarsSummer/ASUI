@@ -1,5 +1,7 @@
 package testjson;
 
+import android.util.Log;
+
 import okhttp3.WebSocket;
 
 /**
@@ -7,6 +9,7 @@ import okhttp3.WebSocket;
  */
 
 public class Connection {
+    private String logTag = "Connection Class";
     //to send message
     private final static int NORMAL_CLOSURE = 1000;
     private WebSocket webSocket;
@@ -14,7 +17,7 @@ public class Connection {
         this.webSocket = webSocket;
     }
     public  boolean initChat(){
-        System.out.println("Connection");
+        Log.i(logTag, "Connection");
         return webSocket.send("Connection");
     }
     public boolean selectDoctor(int doctorCode){

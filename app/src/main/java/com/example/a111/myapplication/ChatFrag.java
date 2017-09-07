@@ -53,8 +53,11 @@ public class ChatFrag extends Fragment{
         GridLayoutManager layoutManager=new GridLayoutManager(getActivity(),1);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: 医生列表获取及缓存处理
-        httpClient = MainActivity.getService();
-        httpClient.getConection().initChat();
+        Intent intent = new Intent();
+        intent.setAction("intent_service");
+        intent.setPackage(getActivity().getPackageName());
+        intent.putExtra("param",4);
+        getActivity().startService(intent);
     }
 
     public class MyBroadcastReceiver extends BroadcastReceiver {

@@ -4,14 +4,18 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -26,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -88,31 +93,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+    //private GoogleApiClient client;
     //httpclient service
-    HttpClient httpClient = null;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            httpClient = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            httpClient = ((HttpClient.LocalBinder)service).getService();
-        }
-    };
+//    HttpClient httpClient = null;
+//    private ServiceConnection mConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            //httpClient = null;
+//        }
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            //httpClient = ((HttpClient.LocalBinder)service).getService();
+//        }
+//    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        //set windows to fullscreen only used when higher than sdk 19
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_login);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //register broadcast
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance( this );
+        MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver() ;
+        IntentFilter intentFilter = new IntentFilter( "Log_in") ;
+        localBroadcastManager.registerReceiver( broadcastReceiver , intentFilter );
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
-
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -139,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View v) {
                 Intent intent_reg=new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(intent_reg);
-                unbindService(mConnection);
+
             }
         });
 
@@ -147,11 +159,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        //bind service
-        bindService(new Intent(LoginActivity.this,HttpClient.class),mConnection, Service.BIND_AUTO_CREATE);
-    }
+        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+    }
+    //unbind httpservice
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //unbindService(mConnection);
+    }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -243,31 +261,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             //focusView.requestFocus();
         //} else {
-            Toast.makeText(this,"start login",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"start login",Toast.LENGTH_SHORT).show();
+        Log.i("LoginActivity", "start login");
 //            mAuthTask = new UserLoginTask(mEmailView.getText().toString(),mPasswordView.getText().toString());
 //            mAuthTask.execute();
-            //login
-            httpClient.login(mEmailView.getText().toString(),mPasswordView.getText().toString(), new Callback()
-            {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
+        //login
+        Intent intent = new Intent();
+        intent.setAction("intent_service");
+        intent.setPackage(getPackageName());
+        intent.putExtra("param",1);
+        intent.putExtra("phonenum", mEmailView.getText().toString());
+        intent.putExtra("password", mPasswordView.getText().toString());
+        startService(intent);
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
-                    int code = new Gson().fromJson(response.body().charStream(), int.class);
-                    Toast.makeText(LoginActivity.this,code,Toast.LENGTH_SHORT).show();
-                    if (code == 0){
-                        unbindService(mConnection);
-                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                        startActivity(intent);
-                    }
-                }
-            });
        // }
 
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction() ;
+            if ( "Log_in".equals( action )){
+                Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(nextIntent);
+            }
+        }
     }
 
     private boolean isEmailValid(String email) {
@@ -375,25 +395,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .build();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//
+//        // ATTENTION: This was auto-generated to implement the App Indexing API.
+//        // See https://g.co/AppIndexing/AndroidStudio for more information.
+//        client.connect();
+//        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//
+//        // ATTENTION: This was auto-generated to implement the App Indexing API.
+//        // See https://g.co/AppIndexing/AndroidStudio for more information.
+//        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+//        client.disconnect();
+//    }
 
 
     private interface ProfileQuery {

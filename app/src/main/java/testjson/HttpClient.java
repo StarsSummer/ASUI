@@ -1,5 +1,6 @@
 package testjson;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -8,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -47,7 +49,7 @@ import static testjson.SignUpException.SERVER_WRONG_RETURN;
  * Created by Jinffee on 2017/8/17.
  */
 
-public class HttpClient extends Service{
+public class HttpClient extends IntentService {
     private String logTag = "HttpClient";
     private MediaType MEDIA_TYPE_TEXT = MediaType.parse("text/plain");
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
@@ -59,12 +61,12 @@ public class HttpClient extends Service{
     //find user in database"
 
     private OkHttpClient client;
-    private WebSocket webSocket;
     private Gson gson;
     private String hql;
-    private Connection conection;
-    private int userCode;
+    private static Connection conection;
+    private static int userCode;
     public HttpClient(){
+        super("HttpClient");
         client= new OkHttpClient.Builder().readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
                                             .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
                                             .connectTimeout(3000, TimeUnit.SECONDS).build();//设置连接超时时间  ;
@@ -80,48 +82,104 @@ public class HttpClient extends Service{
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
+        Log.i(logTag,"On Bind");
         return new LocalBinder();
     }
 
     @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+        int order = intent.getIntExtra("param", 0);
+        switch (order){
+            case 0:
+                Log.i(logTag, "did't get param");
+                break;
+            case 1:
+                login(intent.getStringExtra("phonenum"),intent.getStringExtra("password"));
+                break;
+            case 2:
+                normalUserSignUp(new User(0, intent.getStringExtra("phonenum"),"normaluser",intent.getStringExtra("password")));
+                break;
+            case 3:
+                connectionInit();
+                break;
+            case 4:
+                conection.initChat();
+                break;
+            case 5:
+                conection.send(intent.getStringExtra("message"));
+                break;
+            case 6:
+                tougunJudge(intent.getStringExtra("File"));
+                break;
+            case 7:
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(logTag,"On Start Command");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
+        Log.i(logTag, "On Destroy");
         super.onDestroy();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
+        Log.i(logTag, "On UnBind");
+        return true;
     }
 
     @Override
     public void onRebind(Intent intent) {
+        Log.i(logTag, "On Rebind");
         super.onRebind(intent);
     }
 
     //login
-    public void login(String phonenum,String password,Callback callback){
-        int code;
+    public int getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(int userCode) {
+        this.userCode = userCode;
+    }
+
+    public void login(String phonenum, String password){
         //find user in database
         hql = "from User as user where user.userAccount='"+phonenum+"' and user.password='"+password+"'";
-        System.out.println(hql);
+        Log.i(logTag, hql);
         Request request = new Request.Builder()
                 .url("http://" +  ip + ":" + port + "/" + projectname + "/Login")//url of server
                 .post(RequestBody.create(MEDIA_TYPE_TEXT,hql))
                 .build();
         //request will enqueue to send
-        client.newCall(request).enqueue(callback);
-        //if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
-        //code = gson.fromJson(response.body().charStream(), int.class);
-        //return code;
+        client.newCall(request).enqueue(new Callback() {
+                                            @Override
+                                            public void onFailure(Call call, IOException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            @Override
+                                            public void onResponse(Call call, Response response) throws IOException {
+                                                if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+                                                userCode = gson.fromJson(response.body().charStream(), int.class);
+                                                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(HttpClient.this);
+                                                Intent intent = new Intent();
+                                                intent.setAction("Log_in");
+                                                intent.putExtra("code",userCode);
+                                                bm.sendBroadcast(intent);
+                                            }
+                                        });
     }
     //User sign up
-    public void normalUserSignUp(User user, Callback callback) {
+    public void normalUserSignUp(User user) {
         // 0 is false and 1 is ready
         char signUpStatues;
 
@@ -130,13 +188,26 @@ public class HttpClient extends Service{
                 .post(RequestBody.create(MEDIA_TYPE_JSON, gson.toJson(user)))
                 .build();
         //request will enqueue to send
-        client.newCall(request).enqueue(callback);
-    }
-//        if (!response.isSuccessful()) throw new SignUpException(SignUpException.CREATE_FIAL);
-//        signUpStatues = gson.fromJson(response.body().charStream(), char.class);
-//        System.out.println(signUpStatues);
-//        return signUpStatues;
+        client.newCall(request).enqueue(new Callback() {
+                                            @Override
+                                            public void onFailure(Call call, IOException e) {
+                                                e.printStackTrace();
+                                            }
 
+                                            @Override
+                                            public void onResponse(Call call, Response response) throws IOException {
+                                                if (!response.isSuccessful())  throw new IOException("Unexpected code: " + response);
+                                                char signUpStatues = gson.fromJson(response.body().charStream(), char.class);
+                                                System.out.println(signUpStatues);
+                                                //TODO: send Broadcast to activity
+                                                LocalBroadcastManager bm = LocalBroadcastManager.getInstance(HttpClient.this);
+                                                Intent intent = new Intent();
+                                                intent.setAction("Register");
+                                                intent.putExtra("code",signUpStatues);
+                                                bm.sendBroadcast(intent);
+                                            }
+                                        });
+    }
 
    /* private byte[] imageToByte(String path) throws IOException {
         byte[] data = null;
@@ -153,7 +224,7 @@ public class HttpClient extends Service{
         input.close();
         return data;
     }*/
-    public void tougunJudge(int userCode, String path, Callback callback) throws IOException {
+    public void tougunJudge(String path) {
 
         File image = new File(path);
         Date date = new Date();
@@ -169,30 +240,40 @@ public class HttpClient extends Service{
                 .post(builder.build())
                 .build();
         //request will enqueue to send
-        client.newCall(request).enqueue(callback);
-//        if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
-//        String result = gson.fromJson(response.body().charStream(), String.class);
-//        System.out.println(result);
-//        return result;
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+                String result = gson.fromJson(response.body().charStream(), String.class);
+                Log.i(logTag, result);
+
+            }
+        });
+
     }
     // websocket service
-    public void connectionInit(final int code){
+    public void connectionInit(){
         Request request = new Request.Builder()
                 .url("ws://" +  ip + ":" + port + "/" + projectname + "/Chat")//url of server
                 .build();
-        System.out.println("ws://" + ip + ":" + port + "/" + projectname + "/Chat");
-        webSocket = client.newWebSocket(request, new WebSocketListener() {
+        Log.i(logTag, "ws://" + ip + ":" + port + "/" + projectname + "/Chat");
+        WebSocket webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                String usercode = new Gson().toJson(code);
-                System.out.println("UserCode:"+usercode);
+                String usercode = new Gson().toJson(userCode);
+                Log.i(logTag, "UserCode:"+usercode);
                 webSocket.send("UserCode:"+usercode);
             }
 
             @Override
             public void onMessage(WebSocket webSocket, String text) {
                 Intent intent = new Intent();
-                System.out.println( "onMessage: " + text);
+                Log.i(logTag,  "onMessage: " + text);
                 String[] texts = text.split(":",2);
                 if( texts[0].equals("List")){
                     Type type = new TypeToken<List<Object[]>>(){}.getType();
@@ -206,27 +287,27 @@ public class HttpClient extends Service{
                     sendBroadcast(intent);
                 }else if(texts[0].equals("Message")){
                     String message = new Gson().fromJson(texts[1], String.class);
-                    System.out.println(message);
+                    Log.i(logTag, message);
                     //TODO:add print message method and store message method
                     intent.putExtra("Message",message);
                     intent.setAction("Get_Message");
                     sendBroadcast(intent);
                 }else if(texts[0].equals("Error")){
                     String errorMessage = new Gson().fromJson(texts[1], String.class);
-                    System.out.println( errorMessage);
+                    Log.i(logTag,  errorMessage);
                     //TODO:add Error sort method
 //                    intent.setAction("Get_Error");
 //                    sendBroadcast(intent);
                 }else if(texts[0].equals("Connection Setup")){
-                    System.out.println(  "Connection SetUp");
+                    Log.i(logTag,   "Connection SetUp");
                     /*intent.setAction("Connection_SetUp");
                     sendBroadcast(intent);*/
                 }else if (texts[0].equals("\"close\"")) {
-                    System.out.println("connection close");
+                    Log.i(logTag, "connection close");
 //                    intent.setAction("Connection_SetUp");
 //                    sendBroadcast(intent);
                 } else {
-                    System.out.println("wrong information!");
+                    Log.i(logTag, "wrong information!");
 
                 }
 
@@ -235,17 +316,17 @@ public class HttpClient extends Service{
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason) {
                 webSocket.close(1000, null);
-                System.out.println(  "onClosing: " + code + "/" + reason);
+                Log.i(logTag,   "onClosing: " + code + "/" + reason);
             }
 
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
-                System.out.println(  "onClosed: " + code + "/" + reason);
+                Log.i(logTag,   "onClosed: " + code + "/" + reason);
             }
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                System.out.println( "onFailure: " + t.getMessage());
+                Log.i(logTag,  "onFailure: " + t.getMessage());
             }
         });
         conection =new Connection(webSocket);
@@ -288,7 +369,7 @@ public class HttpClient extends Service{
         client.newCall(request).enqueue(callback);
 //        if (!response.isSuccessful()) throw new SignUpException(SignUpException.CREATE_FIAL);
 //        signUpStatues = gson.fromJson(response.body().charStream(), char.class);
-//        System.out.println(signUpStatues);
+//        Log.i(logTag, signUpStatues);
 //        return signUpStatues;
     }
 

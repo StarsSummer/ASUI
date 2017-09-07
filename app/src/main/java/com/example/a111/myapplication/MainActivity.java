@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,32 +52,22 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private String title;
     // code generate from server
-    int userCode = getIntent().getIntExtra("code",-1);
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
-    //httpclient service
-    private static HttpClient httpClient = null;
-    public static ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            httpClient = null;
-        }
+    //private GoogleApiClient client;
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            httpClient = ((HttpClient.LocalBinder)service).getService();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bindService(new Intent(MainActivity.this,HttpClient.class), mConnection, Service.BIND_AUTO_CREATE);
-        httpClient.connectionInit(userCode);
+        Intent intent = new Intent();
+        intent.setAction("intent_service");
+        intent.setPackage(getPackageName());
+        intent.putExtra("param",3);
+        startService(intent);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -192,8 +183,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    public static HttpClient getService(){
-        return httpClient;
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        int a = intent.getIntExtra("code",-1);
+        Log.i("Mainactivity",Integer.toString(a));
+        setIntent(intent);//设置新的intent
+
     }
     private void initTitles(){
 

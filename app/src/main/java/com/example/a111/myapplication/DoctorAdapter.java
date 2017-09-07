@@ -56,7 +56,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
                 Doctor doctor = doctorList.get(positon);
                 //TODO: 获取doctor类所有信息
                 //Toast.makeText(v.getContext(),"向"+doctor.getName()+"咨询",Toast.LENGTH_SHORT).show();
-                mContext.unbindService(MainActivity.mConnection);
+
                 Intent asking = new Intent(mContext,AskActivity.class);
                 mContext.startActivity(asking);
             }

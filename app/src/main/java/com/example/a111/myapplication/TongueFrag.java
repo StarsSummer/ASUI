@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,19 +44,18 @@ public class TongueFrag extends Fragment{
     private ImageView subt;
 
     public static final int TAKE_PHOTO=1;
+    public static final int CROP_BIG_PICTURE = 2;
     private ImageView picture;
     private Uri imageUri;
+    private File file;
 
-    private int userCode;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saveInstanceState){
         view=inflater.inflate(R.layout.content_tongue,container,false);
         picture=(ImageView)view.findViewById(R.id.imageView5);
         subt=(ImageView)view.findViewById(R.id.imageView6);
-        //get userCode
-        Bundle bundle = getArguments();
-        userCode = bundle.getInt("code");
 
         return view;
     }
@@ -66,6 +66,12 @@ public class TongueFrag extends Fragment{
         subt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction("intent_service");
+                intent.setPackage(getActivity().getPackageName());
+                intent.putExtra("param",6);
+                intent.putExtra("File",imageUri.getPath());
+                getActivity().startService(intent);
                 Toast.makeText(getActivity(),"图片已保存，解析中...",Toast.LENGTH_LONG).show();
             }
         });
@@ -74,6 +80,7 @@ public class TongueFrag extends Fragment{
             @Override
             public void onClick(View v) {
                 File outputImage =new File(getActivity().getExternalCacheDir(),"tongue_image.jpg");
+                file = outputImage;
                 try {
                     if (!outputImage.getParentFile().exists())
                         outputImage.getParentFile().mkdirs();
@@ -86,6 +93,7 @@ public class TongueFrag extends Fragment{
                     intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
                 }else {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(outputImage));
+                    imageUri = Uri.fromFile(outputImage);
                 }
                 try{
 
@@ -99,7 +107,37 @@ public class TongueFrag extends Fragment{
             }
         });
     }
+    private void cropImageUri(Uri originUri, Uri copeUri, int outputX, int outputY, int requestCode){
 
+        Intent intent = new Intent("com.android.camera.action.CROP");
+
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        intent.setDataAndType(originUri, "image/*");
+
+        intent.putExtra("crop", "true");
+
+        intent.putExtra("aspectX", 1);
+
+        intent.putExtra("aspectY", 1);
+
+        intent.putExtra("outputX", outputX);
+
+        intent.putExtra("outputY", outputY);
+
+        intent.putExtra("scale", true);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, copeUri);
+
+        intent.putExtra("return-data", false);
+
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+
+        intent.putExtra("noFaceDetection", true); // no face detection
+        Log.i("TongueFrag",imageUri.toString());
+        startActivityForResult(intent, requestCode);
+
+    }
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
@@ -107,12 +145,28 @@ public class TongueFrag extends Fragment{
         switch (requestCode){
             case TAKE_PHOTO:
                 if(resultCode==getActivity().RESULT_OK){
-                    try{
-                        Bitmap bitmap =BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri));
-                        picture.setImageBitmap(bitmap);
-                    }catch (FileNotFoundException e) {
+                    File outputImage =new File(getActivity().getExternalCacheDir(),"tongue_image_cope.jpg");
+                    try {
+                        if (!outputImage.getParentFile().exists())
+                            outputImage.getParentFile().mkdirs();
+                    }catch (Exception e){
                         e.printStackTrace();
                     }
+                    Uri copeUri = Uri.fromFile(outputImage);
+                    //Uri copeUri=FileProvider.getUriForFile(getActivity(),"com.example.a111.myapplication.fileprovider",outputImage);
+                    //getActivity().grantUriPermission(getActivity().getPackageName(), copeUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    cropImageUri(imageUri,copeUri, 480, 480, CROP_BIG_PICTURE);
+
+                }
+                break;
+            case CROP_BIG_PICTURE:
+                if(resultCode==getActivity().RESULT_OK){
+
+                       // Bitmap bitmap =BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri));
+                    Log.i("TongueFrag","crop");
+                    picture.setImageURI(imageUri);
+
+
                 }
                 break;
             default:

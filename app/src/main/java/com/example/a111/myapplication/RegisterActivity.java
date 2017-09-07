@@ -96,25 +96,15 @@ public class RegisterActivity extends AppCompatActivity  {
         bindService(new Intent(RegisterActivity.this,HttpClient.class),mConnection, Service.BIND_AUTO_CREATE);
     }
     private void register(){
-        httpClient.normalUserSignUp(new User(0, phoneNumView.getText().toString(), "normal", passwordView.getText().toString()), new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
+        //login
+        Intent intent = new Intent();
+        intent.setAction("intent_service");
+        intent.setPackage(getPackageName());
+        intent.putExtra("param",2);
+        intent.putExtra("phonenum", phoneNumView.getText().toString());
+        intent.putExtra("password", passwordView.getText().toString());
+        startService(intent);
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful())  throw new IOException("Unexpected code: " + response);
-                char signUpStatues = new Gson().fromJson(response.body().charStream(), char.class);
-                System.out.println(signUpStatues);
-                if(signUpStatues == 0){
-                    Toast.makeText(RegisterActivity.this,"wrong",Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(RegisterActivity.this,"ok",Toast.LENGTH_SHORT).show();
-                    RegisterActivity.this.finish();
-                }
-            }
-        });
     }
 //
 //    public class UserRegisterTask extends AsyncTask<User, Void, Character> {

@@ -38,24 +38,11 @@ public class AskActivity extends AppCompatActivity {
     private RecyclerView msgRecycler;
     private MsgAdapter adapter;
     private TextView bartitle;
-    //httpclient service
-    private static HttpClient httpClient = null;
-    public static ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            httpClient = null;
-        }
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            httpClient = ((HttpClient.LocalBinder)service).getService();
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //bind service
-        bindService(new Intent(AskActivity.this,HttpClient.class), mConnection, Service.BIND_AUTO_CREATE);
+
         //通过代码的方式动态注册MyBroadcastReceiver
         MyBroadcastReceiver receiver=new MyBroadcastReceiver();
         IntentFilter filter=new IntentFilter();
@@ -93,7 +80,12 @@ public class AskActivity extends AppCompatActivity {
             public void onClick(View v){
                 String content=input.getText().toString();
                 if(!"".equals(content)){
-                    httpClient.getConection().send(content);
+                    Intent intent = new Intent();
+                    intent.setAction("intent_service");
+                    intent.setPackage(getPackageName());
+                    intent.putExtra("param",5);
+                    intent.putExtra("message", content);
+                    startService(intent);
                     Msg msg =new Msg(content, Msg.TYPE_SENT);
                     msgList.add(msg);
                     adapter.notifyItemInserted(msgList.size()-1);
