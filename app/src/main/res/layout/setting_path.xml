@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backimg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_overlay"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_filechoose"
+            android:background="@drawable/btn_trans"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
+            android:text="选择目录"
+            android:textColor="@color/color_white"/>
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:text="您当前选择的路径:"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="50dp"
+            android:textColor="@color/color_white"/>
+        <TextView
+            android:id="@+id/text_filechoose"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:text="/"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/color_white"/>
+    </LinearLayout>
+</LinearLayout>
