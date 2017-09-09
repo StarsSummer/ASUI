@@ -2,7 +2,13 @@ package com.example.a111.myapplication;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.MemoryFile;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.support.v4.os.EnvironmentCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +17,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +36,8 @@ public class SetPathFrag extends Fragment {
     private View view;
     private Button chooseFile;
     private TextView fileDile;
-    private String curPath="/mnt";
-    private String finalpath="/mnt";
+    private String curPath= "/storage";
+    private String finalpath="/storage";
 
 
     @Override
@@ -41,6 +49,7 @@ public class SetPathFrag extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+        Toast.makeText(getActivity(),Environment.getExternalStorageDirectory().getAbsolutePath(), Toast.LENGTH_SHORT).show();
         chooseFile=(Button)view.findViewById(R.id.btn_filechoose);
         fileDile=(TextView)view.findViewById(R.id.text_filechoose);
         chooseFile.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +65,7 @@ public class SetPathFrag extends Fragment {
         File f = new File(curPath);
         File[] fs =f.listFiles();
         final List<Map<String,Object>> mapList = new ArrayList<Map<String, Object>>();
-        if (!curPath.equals("/mnt")){
+        if (!curPath.equals("/storage")){
             Map<String,Object> map1 = new HashMap<String,Object>();
             map1.put("name","返回上一级目录");
             map1.put("image",R.drawable.ic_path_back);
