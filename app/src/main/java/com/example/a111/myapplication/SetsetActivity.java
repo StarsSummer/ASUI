@@ -62,12 +62,15 @@ public class SetsetActivity extends AppCompatActivity {
                 break;
             case "path":
                 bartitle.setText("存储管理");
+                fm.beginTransaction().replace(R.id.setting_setting,new SetPathFrag(),"t1").commit();
                 break;
             case "doctor":
                 bartitle.setText("医生认证");
+                fm.beginTransaction().replace(R.id.setting_setting,new SetDoctorFrag(),"t2").commit();
                 break;
             case "advice":
                 bartitle.setText("意见反馈");
+                fm.beginTransaction().replace(R.id.setting_setting,new SetAdviceFrag(),"t3").commit();
                 break;
         }
     }
