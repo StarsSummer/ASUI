@@ -218,6 +218,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             Intent intent=new Intent(LoginActivity.this,MainActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.show_in_alpha,R.anim.fade_in_alpha);
             finish();
         }
 
