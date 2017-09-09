@@ -1,4 +1,4 @@
-package pojo;
+package POJO;
 
 /**
  * Created by Jinffee on 2017/9/5.

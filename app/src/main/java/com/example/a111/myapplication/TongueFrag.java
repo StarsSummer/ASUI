@@ -47,6 +47,7 @@ public class TongueFrag extends Fragment{
     public static final int CROP_BIG_PICTURE = 2;
     private ImageView picture;
     private Uri imageUri;
+    Uri copeUri;
     private File file;
 
 
@@ -70,7 +71,7 @@ public class TongueFrag extends Fragment{
                 intent.setAction("intent_service");
                 intent.setPackage(getActivity().getPackageName());
                 intent.putExtra("param",6);
-                intent.putExtra("File",imageUri.getPath());
+                intent.putExtra("File",copeUri.getPath());
                 getActivity().startService(intent);
                 Toast.makeText(getActivity(),"图片已保存，解析中...",Toast.LENGTH_LONG).show();
             }
@@ -152,7 +153,7 @@ public class TongueFrag extends Fragment{
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    Uri copeUri = Uri.fromFile(outputImage);
+                    copeUri = Uri.fromFile(outputImage);
                     //Uri copeUri=FileProvider.getUriForFile(getActivity(),"com.example.a111.myapplication.fileprovider",outputImage);
                     //getActivity().grantUriPermission(getActivity().getPackageName(), copeUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     cropImageUri(imageUri,copeUri, 480, 480, CROP_BIG_PICTURE);
@@ -164,7 +165,7 @@ public class TongueFrag extends Fragment{
 
                        // Bitmap bitmap =BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri));
                     Log.i("TongueFrag","crop");
-                    picture.setImageURI(imageUri);
+                    picture.setImageURI(copeUri);
 
 
                 }

@@ -1,4 +1,4 @@
-package pojo;
+package POJO;
 // Generated 2017-8-29 9:54:56 by Hibernate Tools 4.3.1
 
 

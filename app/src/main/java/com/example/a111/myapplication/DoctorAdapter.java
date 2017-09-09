@@ -3,19 +3,15 @@ package com.example.a111.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import pojo.Doctor;
-import pojo.DoctorInformation;
+import POJO.Doctor;
 
 /**
  * Created by 111 on 2017/8/25.
@@ -69,6 +65,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         Doctor doctor=doctorList.get(position);
         //holder.doctorname.setText(doctor.getName());
         holder.doctorstat.setText(doctor.getDep());
+
     }
 
     @Override

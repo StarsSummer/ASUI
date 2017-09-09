@@ -13,12 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import pojo.Doctor;
-import testjson.Connection;
-import testjson.HttpClient;
+import POJO.Doctor;
 
 /**
  * Created by 111 on 2017/9/1.
@@ -26,7 +23,7 @@ import testjson.HttpClient;
 
 public class ChatFrag extends Fragment{
     private View view;
-    private List<Doctor> doctorList=new ArrayList<>();
+    private List<Doctor> doctorList;
 
     private DoctorAdapter adapter;
     RecyclerView recyclerView;
@@ -64,7 +61,7 @@ public class ChatFrag extends Fragment{
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-            List<Doctor> doctors = (List<Doctor>)intent.getSerializableExtra("List");
+            doctorList = (List<Doctor>)intent.getSerializableExtra("List");
             adapter=new DoctorAdapter(doctorList);
             recyclerView.setAdapter(adapter);
             TextView headtext=(TextView)view.findViewById(R.id.headpic_text_chat);

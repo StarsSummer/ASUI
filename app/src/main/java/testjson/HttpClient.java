@@ -1,30 +1,20 @@
 package testjson;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,10 +30,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.ByteString;
-import pojo.*;
-
-import static testjson.SignUpException.SERVER_WRONG_RETURN;
+import POJO.*;
 
 /**
  * Created by Jinffee on 2017/8/17.
@@ -55,9 +42,9 @@ public class HttpClient extends IntentService {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "[2001:da8:215:c658:d491:acfd:6a4e:6dc8]";
+    private String ip = "[2001:da8:215:c658:2bb:a19d:4388:4981]";
     private String port = "8080";
-    private String projectname = "caffe";
+    private String projectname = "intelcaffe";
     //find user in database"
 
     private OkHttpClient client;
@@ -72,6 +59,7 @@ public class HttpClient extends IntentService {
                                             .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
                                             .connectTimeout(3000, TimeUnit.SECONDS).build();//设置连接超时时间  ;
         gson=new Gson();
+
     }
     public class LocalBinder extends Binder {
         public HttpClient getService() {

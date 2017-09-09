@@ -7,22 +7,26 @@
     <include layout="@layout/toolbar"/>
     <View style="@style/bg_line"/>
     <LinearLayout style="@style/wrap_layout">
-        <LinearLayout style="@style/mid_layout">
+        <LinearLayout style="@style/mid_layout"
+            android:id="@+id/set_myself">
             <TextView style="@style/user_settext" android:text="我的资料"/>
                 <ImageView style="@style/arrow"/>
         </LinearLayout>
             <View style="@style/bg_line"/>
-        <LinearLayout style="@style/mid_layout">
+        <LinearLayout style="@style/mid_layout"
+            android:id="@+id/set_path">
             <TextView style="@style/user_settext" android:text="存储管理"/>
                 <ImageView style="@style/arrow" />
         </LinearLayout>
             <View style="@style/bg_line"/>
-        <LinearLayout style="@style/mid_layout">
+        <LinearLayout style="@style/mid_layout"
+            android:id="@+id/set_doctor">
             <TextView style="@style/user_settext" android:text="医生认证"/>
                 <ImageView style="@style/arrow" />
         </LinearLayout>
             <View style="@style/bg_line"/>
-        <LinearLayout style="@style/mid_layout">
+        <LinearLayout style="@style/mid_layout"
+            android:id="@+id/set_update">
             <TextView style="@style/user_settext" android:text="版本更新" />
                 <ImageView style="@style/arrow"/>
         </LinearLayout>
@@ -43,22 +47,25 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
             <View style="@style/bg_line"/>
-        <LinearLayout style="@style/mid_layout">
+        <LinearLayout style="@style/mid_layout"
+            android:id="@+id/set_advice">
             <TextView style="@style/user_settext" android:text="意见反馈"/>
                 <ImageView style="@style/arrow"/>
         </LinearLayout>
     </LinearLayout>
         <View style="@style/bg_line"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black_overlay">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="15dp"
+            android:text="Presented by Wall_E"
             android:textColor="#75ffffff"
-            android:text="Presented by Wall_E"/>
+            android:textSize="15dp" />
     </LinearLayout>
 </LinearLayout>

@@ -4,13 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
-import pojo.Record;
-import pojo.User;
-
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.*;
 
 /**
  * Created by Jinffee on 2017/8/24.
@@ -36,8 +30,8 @@ public class HttpClientTest {
     @Test
     public void tougunJudge() throws Exception {
         //conversation test
-        httpClient1.connectionInit(1);
-        httpClient2.connectionInit(2);
+        httpClient1.connectionInit();
+        httpClient2.connectionInit();
         sleep(6000);
         Connection connection1 = httpClient1.getConection();
         Connection connection2 = httpClient2.getConection();

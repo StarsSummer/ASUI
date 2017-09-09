@@ -57,7 +57,6 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import sqlite.MySql;
 import testjson.HttpClient;
 
 import static android.Manifest.permission.READ_CONTACTS;
