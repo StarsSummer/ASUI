@@ -42,9 +42,9 @@ public class HttpClient extends IntentService {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "[2001:da8:215:c658:2bb:a19d:4388:4981]";
+    private String ip = "[2001:da8:215:c658:d491:acfd:6a4e:6dc8]";
     private String port = "8080";
-    private String projectname = "intelcaffe";
+    private String projectname = "caffe";
     //find user in database"
 
     private OkHttpClient client;
@@ -52,7 +52,7 @@ public class HttpClient extends IntentService {
     private String hql;
     LocalBroadcastManager bm  = LocalBroadcastManager.getInstance(HttpClient.this);;
     private static Connection conection;
-    private static int userCode;
+    private static int userCode = -1;
     public HttpClient(){
         super("HttpClient");
         client= new OkHttpClient.Builder().readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
@@ -131,8 +131,8 @@ public class HttpClient extends IntentService {
         super.onRebind(intent);
     }
 
-    //login
-    public int getUserCode() {
+
+    public static int getUserCode() {
         return userCode;
     }
 

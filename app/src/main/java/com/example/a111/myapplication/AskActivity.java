@@ -19,6 +19,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import POJO.Message;
+
 /**
  * Created by 111 on 2017/9/3.
  */
@@ -30,20 +32,19 @@ public class AskActivity extends AppCompatActivity {
     private RecyclerView msgRecycler;
     private MsgAdapter adapter;
     private TextView bartitle;
-
+    private int docotorCode;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         //通过代码的方式动态注册MyBroadcastReceiver
         MyBroadcastReceiver receiver=new MyBroadcastReceiver();
         IntentFilter filter=new IntentFilter();
         filter.addAction("Get_Message");
         //注册receiver
         registerReceiver(receiver, filter);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         setContentView(R.layout.activity_ask);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");

@@ -19,4 +19,5 @@ public class Msg {
     public int getMsgType(){
         return type;
     }
+
 }

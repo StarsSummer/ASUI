@@ -72,9 +72,9 @@ public class MySQLHelper extends SQLiteOpenHelper {
                 Constant.HEALTHINFO_BLOODHIGH + " float," + Constant.HEALTHINFO_BLOODLOW + " float," +
                 Constant.HEALTHINFO_WEIGHT + " float," + Constant.HEALTHINFO_HEIGHT + " float," +
                 "constraint " + Constant.HEALTHINFO_ID + " primary key (" + Constant.HEALTHINFO_CODE + "," + Constant.HEALTHINFO_DATE + "))";
-        String createMessageSQL = "CREATE TABLE message(" + Constant.MESSAGE_SENDERCODE + " INTEGER," + Constant.MESSAGE_RECEIVERCODE + " INTEGER," +
-                Constant.MESSAGE_MESSAGE + " TEXT," + "constraint " + Constant.MESSAGE_ID + " primary key (" + Constant.MESSAGE_SENDERCODE + "," +
-                Constant.MESSAGE_RECEIVERCODE + "))";
+        String createMessageSQL = "CREATE TABLE " + Constant.TABLE_MESSAGE_NAME + "(" + Constant.MESSAGE_SENDERCODE + " INTEGER," + Constant.MESSAGE_RECEIVERCODE + " INTEGER," +
+                Constant.MESSAGE_MESSAGE + " TEXT," + Constant.MESSAGE_DATE + " Long," + "constraint " + Constant.MESSAGE_ID + " primary key (" + Constant.MESSAGE_SENDERCODE + "," +
+                Constant.MESSAGE_RECEIVERCODE + "," + Constant.MESSAGE_DATE + "))";
         try {
             db.beginTransaction();
             db.execSQL(createUserTableSQL);
@@ -94,47 +94,5 @@ public class MySQLHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
-
-    public long insertUser(String phonenum,String password,int code){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("userAccount", phonenum);
-        values.put("password", password);
-        values.put("userType", "normal");
-        values.put("code",code);
-        return db.insert("User",null,values);
-    }
-
-    public long insertPersonInfo(PersonInfo pojo){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("code", pojo.getCode());
-        values.put("sex", pojo.getSex());
-        values.put("email", pojo.getEmail());
-        values.put("icon", pojo.getIcon());
-        values.put("birthDate", pojo.getBirthDate().getTime());
-        values.put("nickname",pojo.getNickname());
-        return db.insert("PersonInfo",null,values);
-    }
-    public long insertDoctorInformation(DoctorInformation pojo){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("code", pojo.getCode());
-        values.put("dep", pojo.getDep());
-        return db.insert("DoctorInfomation",null,values);
-    }
-    public long insertHealthInfo(HealthInfo pojo){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("code", pojo.getId().getCode());
-        values.put("date", pojo.getId().getDate().getTime());
-        values.put("bloodHigh", pojo.getBloodHigh().doubleValue());
-        values.put("bloodLow", pojo.getBloodLow().doubleValue());
-        values.put("weight",pojo.getWeight().doubleValue());
-        values.put("height", pojo.getHeight().doubleValue());
-        return db.insert("HealthInfo", null, values);
-    }
-
 
 }

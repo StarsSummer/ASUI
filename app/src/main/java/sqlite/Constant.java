@@ -53,4 +53,5 @@ public class Constant {
     public static final String MESSAGE_SENDERCODE = "senderCode";
     public static final String MESSAGE_RECEIVERCODE = "receiverCode";
     public static final String MESSAGE_MESSAGE = "message";
+    public static final String MESSAGE_DATE = "date";
  }

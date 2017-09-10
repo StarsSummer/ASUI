@@ -79,12 +79,14 @@
                 android:gravity="center"
                 android:text="所在科室:"
                 android:textColor="@color/color_white"/>
+
             <EditText
+                android:id="@+id/docDep"
+                android:layout_width="170dp"
+                android:layout_height="30dp"
                 android:background="@drawable/edit_line"
                 android:gravity="left"
-                android:maxLines="1"
-                android:layout_width="170dp"
-                android:layout_height="30dp" />
+                android:maxLines="1" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="300dp"

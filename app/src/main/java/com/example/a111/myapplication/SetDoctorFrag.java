@@ -15,7 +15,7 @@ import android.widget.Toast;
  */
 
 public class SetDoctorFrag extends Fragment {
-
+    private TextView doctorDep;
     private View view;
     private Button submitbtn;
 
@@ -29,10 +29,12 @@ public class SetDoctorFrag extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+        doctorDep = (TextView)view.findViewById(R.id.docDep);
         submitbtn=(Button)view.findViewById(R.id.btn_doctor_submit);
         submitbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Toast.makeText(getActivity(), "成功提交", Toast.LENGTH_SHORT).show();
             }
         });

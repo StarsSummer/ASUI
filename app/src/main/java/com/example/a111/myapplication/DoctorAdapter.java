@@ -55,6 +55,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
                 //Toast.makeText(v.getContext(),"向"+doctor.getName()+"咨询",Toast.LENGTH_SHORT).show();
 
                 Intent asking = new Intent(mContext,AskActivity.class);
+                asking.putExtra("doctorCode", doctor.getcode());
                 mContext.startActivity(asking);
             }
         });
