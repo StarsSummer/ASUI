@@ -14,7 +14,9 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,9 +44,9 @@ public class HttpClient extends IntentService {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "[2001:da8:215:c658:2bb:a19d:4388:4981]";
+    private String ip = "[2001:da8:215:c658:d491:acfd:6a4e:6dc8]";
     private String port = "8080";
-    private String projectname = "intelcaffe";
+    private String projectname = "caffe";
     //find user in database"
 
     private OkHttpClient client;
@@ -338,7 +340,32 @@ public class HttpClient extends IntentService {
     public Connection getConection(){
         return this.conection;
     }
-    public void query(String hql, Class<?> clazz) {
+    private static class ListParameterizedType implements ParameterizedType {
+
+        private Type type;
+
+        private ListParameterizedType(Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[] {type};
+        }
+
+        @Override
+        public Type getRawType() {
+            return ArrayList.class;
+        }
+
+        @Override
+        public Type getOwnerType() {
+            return null;
+        }
+
+        // implement equals method too! (as per javadoc)
+    }
+    public <T> void query(String hql, final Class<T> clazz) {
         Request request = new Request.Builder()
                 .url("http://" +  ip + ":" + port + "/" + projectname + "/Query")//url of server
                 .post(RequestBody.create(MEDIA_TYPE_TEXT,hql))
@@ -353,8 +380,8 @@ public class HttpClient extends IntentService {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
-                Type type = new TypeToken<List<?>>(){}.getType();
-                List<?> result = gson.fromJson(response.body().charStream() , type);
+                Type type = new ListParameterizedType(clazz);;
+                List<T> result = gson.fromJson(response.body().charStream(), type);
                 Intent queryIntent = new Intent();
                 queryIntent.setAction("Query_List");
                 queryIntent.putExtra("List",(Serializable)result);

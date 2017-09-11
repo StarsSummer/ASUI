@@ -58,7 +58,8 @@
                         android:id="@+id/self_name_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:inputType="text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -75,7 +76,8 @@
                         android:id="@+id/self_sex_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:inputType="text"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -92,7 +94,8 @@
                         android:id="@+id/self_year_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:inputType="text"/>
                 </LinearLayout>
 
                 <LinearLayout

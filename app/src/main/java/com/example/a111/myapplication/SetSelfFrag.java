@@ -16,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -80,56 +82,6 @@ public class SetSelfFrag extends Fragment {
         birthDateView = (EditText)view.findViewById(R.id.self_year_edit);
         emailView = (EditText)view.findViewById(R.id.self_email_edit);
         iconView = (ImageView)view.findViewById(R.id.setting_headimg);
-        nickNameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(!v.getText().toString().equals(personInfo.getNickname()))
-                    isChange = true;
-                else
-                    personInfo.setNickname(v.getText().toString());
-
-                return false;
-            }
-        });
-        sexView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(!v.getText().toString().equals(personInfo.getSex())){
-                    isChange = true;
-
-                }else
-                    personInfo.setSex(v.getText().toString());
-                return false;
-            }
-        });
-        birthDateView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    Date date = dateFormat.parse(v.getText().toString());
-                    if(!date.equals(personInfo.getBirthDate()))
-                        isChange = true;
-                    else
-                        personInfo.setBirthDate(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    v.setText(personInfo.getBirthDate().toString());
-                    Toast.makeText(getContext(),"格式错误",Toast.LENGTH_SHORT);
-                }
-                return false;
-            }
-        });
-        emailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(!v.getText().toString().equals(personInfo.getEmail()))
-                    isChange = true;
-                else
-                    personInfo.setEmail(v.getText().toString());
-                return false;
-            }
-        });
         Button getIconButton = (Button)view.findViewById(R.id.change_icon);
         getIconButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +124,7 @@ public class SetSelfFrag extends Fragment {
                          * create a intent for album
                          */
                         Intent albumIntent = new Intent(Intent.ACTION_PICK);
+                        albumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                         startActivityForResult(albumIntent, REQUEST_ALBUM);
                         break;
                     case 1:
@@ -297,7 +250,7 @@ public class SetSelfFrag extends Fragment {
         intent.setPackage(getActivity().getPackageName());
         intent.putExtra("param",7);
         intent.putExtra("hql", hql);
-        intent.putExtra("className", "PersonInfo");
+        intent.putExtra("className", "POJO.PersonInfo");
         getActivity().startService(intent);
     }
 
@@ -318,7 +271,10 @@ public class SetSelfFrag extends Fragment {
                  */
                 nickNameView.setText(personInfo.getNickname());
                 sexView.setText(personInfo.getSex());
-                birthDateView.setText(personInfo.getBirthDate().toString());
+                if(personInfo.getBirthDate() != null){
+                    SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+                    birthDateView.setText(sdf.format(personInfo.getBirthDate()));
+                }
                 emailView.setText(personInfo.getEmail());
                 if (personInfo.getIcon() != null)
                     iconView.setImageBitmap(BitmapFactory.decodeByteArray(personInfo.getIcon(), 0, personInfo.getIcon().length));
@@ -329,9 +285,9 @@ public class SetSelfFrag extends Fragment {
     }
 
     /**
-     * insert personInfo to server
+     * update personInfo to server
      */
-    private void insertPersonInfo(){
+    private void updatePersonInfo(){
         Intent intent = new Intent();
         intent.setAction("intent_service");
         intent.setPackage(getActivity().getPackageName());
@@ -339,10 +295,42 @@ public class SetSelfFrag extends Fragment {
         intent.putExtra("Object", personInfo);
         getActivity().startService(intent);
     }
+
+    /**
+     * juaged personinfo is change
+     */
+    private void judgedChange(){
+        if(!(nickNameView.getText().toString().equals(personInfo.getNickname()))) {
+            isChange = true;
+            personInfo.setNickname(nickNameView.getText().toString());
+        }
+        if(!sexView.getText().toString().equals(personInfo.getSex())){
+            isChange = true;
+            personInfo.setSex(sexView.getText().toString());
+        }
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = dateFormat.parse(birthDateView.getText().toString());
+            if(!date.equals(personInfo.getBirthDate())){
+                isChange = true;
+                personInfo.setBirthDate(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            birthDateView.setText(dateFormat.format(new Date()));
+            Toast.makeText(getContext(),"格式错误",Toast.LENGTH_SHORT);
+        }
+        if(!emailView.getText().toString().equals(personInfo.getEmail())){
+            isChange = true;
+            personInfo.setEmail(emailView.getText().toString());
+        }
+    }
     @Override
     public void onDestroyView() {
+        judgedChange();
         if(isChange)
-            insertPersonInfo();
+            updatePersonInfo();
+        Log.i("self",Boolean.toString(isChange));
         super.onDestroyView();
     }
 }
