@@ -24,6 +24,7 @@
                 android:src="@drawable/headcircle" />
 
             <Button
+                android:id="@+id/change_icon"
                 style="@style/btn_changehead"
                 android:text="✎修改头像" />
         </LinearLayout>
@@ -95,40 +96,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/self_height"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="20dp">
-
-                    <TextView
-                        style="@style/user_setselftext"
-                        android:text="身高" />
-
-                    <EditText
-                        android:id="@+id/self_height_edit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:maxLines="1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/self_weight"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="20dp">
-
-                    <TextView
-                        style="@style/user_setselftext"
-                        android:text="体重" />
-
-                    <EditText
-                        android:id="@+id/self_weight_edit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:maxLines="1"/>
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/self_email"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -142,7 +109,8 @@
                         android:id="@+id/self_email_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:inputType="textEmailAddress"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

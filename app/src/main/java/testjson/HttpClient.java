@@ -42,9 +42,9 @@ public class HttpClient extends IntentService {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "[2001:da8:215:c658:d491:acfd:6a4e:6dc8]";
+    private String ip = "[2001:da8:215:c658:2bb:a19d:4388:4981]";
     private String port = "8080";
-    private String projectname = "caffe";
+    private String projectname = "intelcaffe";
     //find user in database"
 
     private OkHttpClient client;
@@ -101,7 +101,18 @@ public class HttpClient extends IntentService {
                 tougunJudge(intent.getStringExtra("File"));
                 break;
             case 7:
+                try {
+                    query(intent.getStringExtra("hql"),Class.forName(intent.getStringExtra("className")));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
+            case 8:
+                try {
+                    insert(intent.getSerializableExtra("Object"));
+                } catch (HttpException e) {
+                    e.printStackTrace();
+                }
             default:
                 break;
         }
@@ -194,7 +205,7 @@ public class HttpClient extends IntentService {
                                                 if(userCode != -1){
                                                     try {
                                                         insert(new PersonInfo(userCode,userName));
-                                                    } catch (SignUpException e) {
+                                                    } catch (HttpException e) {
                                                         e.printStackTrace();
                                                     }
                                                 }
@@ -327,32 +338,42 @@ public class HttpClient extends IntentService {
     public Connection getConection(){
         return this.conection;
     }
-    public void Query(String hql, Class<?> clazz, Callback callback) throws IOException {
+    public void query(String hql, Class<?> clazz) {
         Request request = new Request.Builder()
                 .url("http://" +  ip + ":" + port + "/" + projectname + "/Query")//url of server
                 .post(RequestBody.create(MEDIA_TYPE_TEXT,hql))
                 .build();
         //request will enqueue to send
-//        client.newCall(request).enqueue(callback);
-//        if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
-//        Type type = new TypeToken<List<T>>(){}.getType();
-//        List<T> result = gson.fromJson(response.body().charStream() , type);
-//        return result;
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+                Type type = new TypeToken<List<?>>(){}.getType();
+                List<?> result = gson.fromJson(response.body().charStream() , type);
+                Intent queryIntent = new Intent();
+                queryIntent.setAction("Query_List");
+                queryIntent.putExtra("List",(Serializable)result);
+                bm.sendBroadcast(queryIntent);
+            }
+        });
+
     }
 
-    public void insert(Object object) throws IOException, SignUpException {
-        char signUpStatues;
+    public void insert(Object object) throws HttpException {
         String json;
-        if(object instanceof User){
-            json = "User;"+gson.toJson(object);
-        }else if(object instanceof PersonInfo) {
+        if(object instanceof PersonInfo) {
             json = "PersonInfo;"+gson.toJson(object);
         }else if(object instanceof HealthInfo){
             json = "HealthInfo;"+gson.toJson(object);
         }else if(object instanceof DoctorInformation){
             json = "DoctorInformation;"+gson.toJson(object);
         }else{
-            throw new SignUpException(SignUpException.Type_Wrong);
+            throw new HttpException(HttpException.Type_Wrong);
         }
         Request request = new Request.Builder()
                 .url("http://" +  ip + ":" + port + "/" + projectname + "/Save")//url of server
@@ -370,10 +391,37 @@ public class HttpClient extends IntentService {
                 Log.i(logTag,"insert success");
             }
         });
-//        if (!response.isSuccessful()) throw new SignUpException(SignUpException.CREATE_FIAL);
+    }
+    public void update(Object object) throws IOException, HttpException {
+        String json;
+
+        if(object instanceof PersonInfo) {
+            json = "PersonInfo;"+gson.toJson(object);
+        }else{
+            throw new HttpException(HttpException.Type_Wrong);
+        }
+        Request request = new Request.Builder()
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/Update")//url of server
+                .post(RequestBody.create(MEDIA_TYPE_JSON,json))
+                .build();
+        //request will enqueue to send
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i(logTag,"update success");
+            }
+        });
+//        if (!response.isSuccessful()) throw new HttpException(HttpException.CREATE_FIAL);
 //        signUpStatues = gson.fromJson(response.body().charStream(), char.class);
 //        Log.i(logTag, signUpStatues);
 //        return signUpStatues;
     }
+
+
 
 }
