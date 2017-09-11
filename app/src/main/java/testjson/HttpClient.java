@@ -109,7 +109,7 @@ public class HttpClient extends IntentService {
                 break;
             case 8:
                 try {
-                    insert(intent.getSerializableExtra("Object"));
+                    update(intent.getSerializableExtra("Object"));
                 } catch (HttpException e) {
                     e.printStackTrace();
                 }
@@ -392,7 +392,7 @@ public class HttpClient extends IntentService {
             }
         });
     }
-    public void update(Object object) throws IOException, HttpException {
+    public void update(Object object) throws HttpException {
         String json;
 
         if(object instanceof PersonInfo) {
