@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,6 +35,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences settings = getSharedPreferences("setting", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        if(!settings.getBoolean("client_status", false)) {
+            editor.putBoolean("client_status", true);
+            editor.putInt("code", HttpClient.getUserCode());
+            editor.commit();
+        }else{
+            HttpClient.setUserCode(settings.getInt("code", -1));
+        }
 
         Intent intent = new Intent();
         intent.setAction("intent_service");
@@ -90,12 +103,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                /**
+                 * quit login status
+                 */
                 RelativeLayout quit =(RelativeLayout)findViewById(R.id.quit_main);
                 quit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent quitbtn=new Intent(MainActivity.this,LoginActivity.class);
-                        startActivity(quitbtn);
+                        SharedPreferences settings = getSharedPreferences("setting", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("client_status", false);
+                        editor.putInt("code", -1);
+                        editor.commit();
+                        MainActivity.this.finish();
                     }
                 });
                 invalidateOptionsMenu();
@@ -105,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerClosed(drawerView);
                 invalidateOptionsMenu();
             }
-
         };
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         abdt.syncState();

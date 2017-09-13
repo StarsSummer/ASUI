@@ -112,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity  {
                 Log.i("RegisterActivity","register");
                 Toast.makeText(RegisterActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
                 //TODO: write to database
-                RegisterActivity.this.setResult(RESULT_OK);
+                RegisterActivity.this.setResult(RESULT_OK, new Intent().putExtra("code", code));
                 RegisterActivity.this.finish();
             }
             else{

@@ -94,7 +94,7 @@ public class SetSelfFrag extends Fragment {
          */
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver() ;
-        IntentFilter intentFilter = new IntentFilter( "Query_List") ;
+        IntentFilter intentFilter = new IntentFilter("Query_List") ;
         localBroadcastManager.registerReceiver( broadcastReceiver , intentFilter );
         /**
          * start getPersonInfo device
@@ -227,6 +227,7 @@ public class SetSelfFrag extends Fragment {
      * @return bytearray
      * @throws IOException
      */
+
     private byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         /**

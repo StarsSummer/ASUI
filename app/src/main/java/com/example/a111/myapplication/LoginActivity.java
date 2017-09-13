@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.IBinder;
@@ -85,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      *  UI references.
      */
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mPhoneNumView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -96,12 +97,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * application login status
      */
-    private boolean isLogin = false;
+    private boolean isLogin ;
+
+    private String logTag = "loginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.i(logTag,Boolean.toString(isLogin));
         /**
          * set windows to fullscreen only used when higher than sdk 19
          */
@@ -120,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /**
          * Set up the login form.
          */
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mPhoneNumView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -157,9 +161,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    /**
+     * execute when loginActivity resume
+     */
     @Override
     protected void onResume() {
         super.onResume();
+        /**
+         * get client status
+         */
+        SharedPreferences preferences = getSharedPreferences("setting",MODE_PRIVATE);
+        isLogin = preferences.getBoolean("client_status", false);
         if (isLogin)
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
@@ -193,7 +205,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mPhoneNumView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -236,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         intent.setAction("intent_service");
         intent.setPackage(getPackageName());
         intent.putExtra("param",1);
-        intent.putExtra("phonenum", mEmailView.getText().toString());
+        intent.putExtra("phonenum", mPhoneNumView.getText().toString());
         intent.putExtra("password", mPasswordView.getText().toString());
         startService(intent);
 
@@ -246,11 +258,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction() ;
-            if ( "Log_in".equals( action )){
+            if (intent.getIntExtra("code",-1) != -1){
                 Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
                 isLogin = true;
                 startActivity(nextIntent);
+            }else{
+                Toast.makeText(LoginActivity.this, "用户名或密码错误",Toast.LENGTH_SHORT);
             }
         }
     }
@@ -341,7 +354,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mPhoneNumView.setAdapter(adapter);
     }
 
     /**

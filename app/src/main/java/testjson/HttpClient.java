@@ -44,7 +44,7 @@ public class HttpClient extends IntentService {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "[2001:da8:215:c658:d491:acfd:6a4e:6dc8]";
+    private String ip = "10.206.11.2";
     private String port = "8080";
     private String projectname = "caffe";
     //find user in database"
@@ -55,6 +55,20 @@ public class HttpClient extends IntentService {
     LocalBroadcastManager bm  = LocalBroadcastManager.getInstance(HttpClient.this);;
     private static Connection conection;
     private static int userCode = -1;
+    /**
+     * signals of request
+     */
+    public static final int NO_PARMA = 0;
+    public static final int LOGIN = 1;
+    public static final int SIGN_UP = 2;
+    public static final int INIT_CONNENT = 3;
+    public static final int INIT_CHAT = 4;
+    public static final int SEND_MESSAGE = 5;
+    public static final int TONGUE_JUDGE = 6;
+    public static final int QUERY = 7;
+    public static final int UPDATE = 8;
+    public static final int INSERT = 9;
+
     public HttpClient(){
         super("HttpClient");
         client= new OkHttpClient.Builder().readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
@@ -63,58 +77,54 @@ public class HttpClient extends IntentService {
         gson=new Gson();
 
     }
-    public class LocalBinder extends Binder {
-        public HttpClient getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return HttpClient.this;
-        }
-    }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.i(logTag,"On Bind");
-        return new LocalBinder();
-    }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         int order = intent.getIntExtra("param", 0);
         switch (order){
-            case 0:
+            case NO_PARMA:
                 Log.i(logTag, "did't get param");
                 break;
-            case 1:
+            case LOGIN:
                 login(intent.getStringExtra("phonenum"),intent.getStringExtra("password"));
                 break;
-            case 2:
+            case SIGN_UP:
                 UserSignUp(new User(0, intent.getStringExtra("phonenum"),"user",intent.getStringExtra("password")),intent.getStringExtra("userName"));
                 break;
-            case 3:
+            case INIT_CONNENT:
                 connectionInit();
                 break;
-            case 4:
+            case INIT_CHAT:
                 conection.initChat();
                 break;
-            case 5:
+            case SEND_MESSAGE:
                 conection.send(intent.getStringExtra("message"));
                 break;
-            case 6:
+            case TONGUE_JUDGE:
                 tougunJudge(intent.getStringExtra("File"));
                 break;
-            case 7:
+            case QUERY:
                 try {
                     query(intent.getStringExtra("hql"),Class.forName(intent.getStringExtra("className")));
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
                 break;
-            case 8:
+            case UPDATE:
                 try {
                     update(intent.getSerializableExtra("Object"));
                 } catch (HttpException e) {
                     e.printStackTrace();
                 }
+                break;
+            case INSERT:
+                try {
+                    insert(intent.getSerializableExtra("Object"));
+                } catch (HttpException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 break;
         }
@@ -149,8 +159,8 @@ public class HttpClient extends IntentService {
         return userCode;
     }
 
-    public void setUserCode(int userCode) {
-        this.userCode = userCode;
+    public static void setUserCode(int userCode) {
+        HttpClient.userCode = userCode;
     }
 
     public void login(String phonenum, String password){
@@ -172,6 +182,7 @@ public class HttpClient extends IntentService {
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
                                                 userCode = gson.fromJson(response.body().charStream(), int.class);
+                                                Log.i(logTag,"Login usercode:"+userCode);
                                                 Intent intent = new Intent();
                                                 intent.setAction("Log_in");
                                                 intent.putExtra("code",userCode);
