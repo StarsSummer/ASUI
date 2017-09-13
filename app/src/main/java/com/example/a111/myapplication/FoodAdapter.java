@@ -2,6 +2,7 @@ package com.example.a111.myapplication;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,7 +42,17 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             mContext=parent.getContext();
         }
         View view= LayoutInflater.from(mContext).inflate(R.layout.food_list,parent,false);
-        return new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                Food food = mfoodList.get(position);
+                Intent introduce = new Intent(mContext,FoodActivity.class);
+                mContext.startActivity(introduce);
+            }
+        });
+        return holder;
     }
 
     @Override

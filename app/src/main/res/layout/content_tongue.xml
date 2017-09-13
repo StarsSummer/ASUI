@@ -26,47 +26,26 @@
             android:text="您的舌头被识别为"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:textColor="#00653b"
             android:textSize="20dp"
             android:gravity="center"
             android:id="@+id/textView11" />
 
         <TextView
-            android:text="地图舌"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_margin="20dp"
             android:textColor="#ffffff"
             android:textSize="25dp"
             android:gravity="center"
             android:id="@+id/textView12" />
 
-        <TextView
-            android:text="准确率为"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="#00653b"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:id="@+id/textView13" />
-
-        <TextView
-            android:text="85.6%"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="#ffffff"
-            android:textSize="25dp"
-            android:gravity="center"
-            android:id="@+id/textView14" />
 
         <TextView
             android:text="点击下方按钮保存结果"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:textColor="#00653b"
             android:textSize="20dp"
             android:gravity="center"
@@ -75,7 +54,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_surebtn"
             android:id="@+id/imageView6" />

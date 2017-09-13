@@ -43,10 +43,22 @@
             android:name=".RegisterActivity"
             android:label="注册"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".FoodActivity"
+            android:label="食物介绍"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SettingActivity"
             android:label="设置"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SetsetActivity"
+            android:label="设置选项"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".AskActivity"
+            android:label="医生"
             android:screenOrientation="portrait"/>
 
         <activity

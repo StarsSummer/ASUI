@@ -266,6 +266,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Toast.makeText(LoginActivity.this, "用户名或密码错误",Toast.LENGTH_SHORT);
             }
         }
+
     }
 
     private boolean isEmailValid(String email) {

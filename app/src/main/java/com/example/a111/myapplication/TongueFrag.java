@@ -2,9 +2,11 @@ package com.example.a111.myapplication;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,12 +20,14 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.images.ImageManager;
@@ -42,9 +46,11 @@ public class TongueFrag extends Fragment{
 
     private View view;
     private ImageView subt;
+    private TextView result;
 
     public static final int TAKE_PHOTO=1;
     public static final int CROP_BIG_PICTURE = 2;
+
     private ImageView picture;
     private Uri imageUri;
     Uri copeUri;
@@ -55,15 +61,20 @@ public class TongueFrag extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saveInstanceState){
         view=inflater.inflate(R.layout.content_tongue,container,false);
+        /**
+         * registe broadcast
+         */
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver() ;
+        IntentFilter intentFilter = new IntentFilter("Result") ;
+        localBroadcastManager.registerReceiver(broadcastReceiver , intentFilter );
+        /**
+         * init component
+         */
         picture=(ImageView)view.findViewById(R.id.imageView5);
         subt=(ImageView)view.findViewById(R.id.imageView6);
+        result = (TextView)view.findViewById(R.id.textView12);
 
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
         subt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +87,6 @@ public class TongueFrag extends Fragment{
                 Toast.makeText(getActivity(),"图片已保存，解析中...",Toast.LENGTH_LONG).show();
             }
         });
-
         picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +117,29 @@ public class TongueFrag extends Fragment{
                 }
             }
         });
+        return view;
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String resultString = intent.getStringExtra("result");
+            if(resultString.equals("OK"))
+                result.setText("正常");
+            else if(resultString.equals("black"))
+                result.setText("黑色舌");
+            else
+                result.setText("裂纹舌");
+        }
+
+    }
+
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+
     }
     private void cropImageUri(Uri originUri, Uri copeUri, int outputX, int outputY, int requestCode){
 

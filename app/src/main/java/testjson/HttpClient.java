@@ -268,6 +268,10 @@ public class HttpClient extends IntentService {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
                 String result = gson.fromJson(response.body().charStream(), String.class);
                 Log.i(logTag, result);
+                Intent intent = new Intent();
+                intent.setAction("Result");
+                intent.putExtra("result",result);
+                bm.sendBroadcast(intent);
 
             }
         });
