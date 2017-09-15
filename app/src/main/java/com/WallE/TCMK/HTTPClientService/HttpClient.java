@@ -54,16 +54,21 @@ public class HttpClient {
     private OkHttpClient client;
     private Gson gson;
     private String hql;
+    public HttpClient(){
+        client= new OkHttpClient.Builder().readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
+                .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
+                .connectTimeout(3000, TimeUnit.SECONDS).build();//设置连接超时时间  ;
+        gson=new Gson();
+    }
 
     public HttpClient(String ip, String port, String projectname){
         this.ip = ip;
         this.port = port;
         this.projectname = projectname;
         client= new OkHttpClient.Builder().readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
-                                            .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
-                                            .connectTimeout(3000, TimeUnit.SECONDS).build();//设置连接超时时间  ;
+                .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
+                .connectTimeout(3000, TimeUnit.SECONDS).build();//设置连接超时时间  ;
         gson=new Gson();
-
     }
     /**
      * User Login
