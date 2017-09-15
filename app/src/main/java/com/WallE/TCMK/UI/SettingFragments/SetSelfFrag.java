@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.WallE.TCMK.HTTPClientService.HTTPClientService;
 import com.WallE.TCMK.POJO.PersonInfo;
 import com.WallE.TCMK.HTTPClientService.HttpClient;
 import com.WallE.TCMK.R;
@@ -242,7 +243,7 @@ public class SetSelfFrag extends Fragment {
      * get personinfo from server
      */
     public void getPersonInfo(){
-        String hql = "from PersonInfo as p where p.code = "+ HttpClient.getUserCode();
+        String hql = "from PersonInfo as p where p.code = "+ HTTPClientService.getUserCode();
         Intent intent = new Intent();
         intent.setAction("intent_service");
         intent.setPackage(getActivity().getPackageName());

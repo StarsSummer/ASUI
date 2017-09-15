@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import com.WallE.TCMK.HTTPClientService.HTTPClientService;
 import com.WallE.TCMK.POJO.DoctorInformation;
 import com.WallE.TCMK.POJO.User;
 import com.WallE.TCMK.HTTPClientService.HttpClient;
@@ -53,14 +54,14 @@ public class SetDoctorFrag extends Fragment {
             @Override
             public void onClick(View v) {
                 user.setUserType("doctor");
-                doctorRegister(new DoctorInformation(HttpClient.getUserCode(), doctorDep.getText().toString()));
+                doctorRegister(new DoctorInformation(HTTPClientService.getUserCode(), doctorDep.getText().toString()));
                 Toast.makeText(getActivity(), "成功提交", Toast.LENGTH_SHORT).show();
             }
         });
         return view;
     }
     private void getUser(){
-        String hql = "from User as u where u.code = "+ HttpClient.getUserCode();
+        String hql = "from User as u where u.code = "+ HTTPClientService.getUserCode();
         Intent intent = new Intent();
         intent.setAction("intent_service");
         intent.setPackage(getActivity().getPackageName());
