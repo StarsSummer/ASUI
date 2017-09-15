@@ -26,6 +26,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.WallE.TCMK.HTTPClientService.HTTPClientService;
 import com.WallE.TCMK.HTTPClientService.HttpClient;
 import com.WallE.TCMK.UI.Base.BasicActivity;
 import com.WallE.TCMK.UI.MainFragments.CenterFrag;
@@ -59,10 +60,10 @@ public class MainActivity extends BasicActivity {
         SharedPreferences.Editor editor = settings.edit();
         if(!settings.getBoolean("client_status", false)) {
             editor.putBoolean("client_status", true);
-            editor.putInt("code", HttpClient.getUserCode());
+            editor.putInt("code", HTTPClientService.getUserCode());
             editor.commit();
         }else{
-            HttpClient.setUserCode(settings.getInt("code", -1));
+            HTTPClientService.setUserCode(settings.getInt("code", -1));
         }
 
         Intent intent = new Intent();

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.WallE.TCMK.UI.UIActivities.RegisterActivity;
 
 /**
  * Created by Jinffee on 2017/9/13.
