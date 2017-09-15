@@ -64,10 +64,12 @@ public class ChatFrag extends Fragment{
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
             doctorList = (List<Doctor>)intent.getSerializableExtra("List");
-            adapter=new DoctorAdapter(doctorList);
-            recyclerView.setAdapter(adapter);
-            TextView headtext=(TextView)view.findViewById(R.id.headpic_text_chat);
-            headtext.setText("专业医生答疑\n值得信赖");
+            if(doctorList != null){
+                adapter=new DoctorAdapter(doctorList);
+                recyclerView.setAdapter(adapter);
+                TextView headtext=(TextView)view.findViewById(R.id.headpic_text_chat);
+                headtext.setText("专业医生答疑\n值得信赖");
+            }
         }
     }
 

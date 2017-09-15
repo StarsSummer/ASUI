@@ -263,23 +263,24 @@ public class SetSelfFrag extends Fragment {
              * get PersonInfo
              */
             List<PersonInfo> list = (List<PersonInfo>)intent.getSerializableExtra("List");
-            if(list.isEmpty() != true) {
-                personInfo = list.get(0);
-                /**
-                 * set to GUI
-                 */
-                nickNameView.setText(personInfo.getNickname());
-                sexView.setText(personInfo.getSex());
-                if(personInfo.getBirthDate() != null){
-                    SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-                    birthDateView.setText(sdf.format(personInfo.getBirthDate()));
+            if(list != null)
+                if(list.isEmpty() != true) {
+                    personInfo = list.get(0);
+                    /**
+                     * set to GUI
+                     */
+                    nickNameView.setText(personInfo.getNickname());
+                    sexView.setText(personInfo.getSex());
+                    if(personInfo.getBirthDate() != null){
+                        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+                        birthDateView.setText(sdf.format(personInfo.getBirthDate()));
+                    }
+                    emailView.setText(personInfo.getEmail());
+                    if (personInfo.getIcon() != null)
+                        iconView.setImageBitmap(BitmapFactory.decodeByteArray(personInfo.getIcon(), 0, personInfo.getIcon().length));
+                }else{
+                    personInfo = new PersonInfo();
                 }
-                emailView.setText(personInfo.getEmail());
-                if (personInfo.getIcon() != null)
-                    iconView.setImageBitmap(BitmapFactory.decodeByteArray(personInfo.getIcon(), 0, personInfo.getIcon().length));
-            }else{
-                personInfo = new PersonInfo();
-            }
         }
     }
 
@@ -330,9 +331,10 @@ public class SetSelfFrag extends Fragment {
     }
     @Override
     public void onDestroyView() {
-        judgedChange();
-        if(isChange)
-            updatePersonInfo();
+        if(HTTPClientService.getUserCode() != -2)
+            judgedChange();
+            if(isChange)
+                updatePersonInfo();
         Log.i("self",Boolean.toString(isChange));
         super.onDestroyView();
     }

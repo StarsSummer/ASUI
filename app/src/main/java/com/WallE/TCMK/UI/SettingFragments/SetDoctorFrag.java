@@ -77,15 +77,16 @@ public class SetDoctorFrag extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             List<User> list = (List<User>)intent.getSerializableExtra("List");
-            if(list.isEmpty() != true) {
-                user = list.get(0);
-                if(user.getUserType().equals("doctor")){
-                    Toast.makeText(getActivity(), "已注册", Toast.LENGTH_SHORT).show();
-                    getActivity().onBackPressed();
+            if(list != null)
+                if(list.isEmpty() != true) {
+                    user = list.get(0);
+                    if(user.getUserType().equals("doctor")){
+                        Toast.makeText(getActivity(), "已注册", Toast.LENGTH_SHORT).show();
+                        getActivity().onBackPressed();
+                    }
+                }else{
+                     Toast.makeText(getContext(),"wrong usercode",Toast.LENGTH_SHORT).show();
                 }
-            }else{
-                 Toast.makeText(getContext(),"wrong usercode",Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

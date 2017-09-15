@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.WallE.TCMK.UI.Base.BasicActivity;
 import com.WallE.TCMK.R;
+import com.WallE.TCMK.UI.Base.BroadcastActivity;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 
@@ -47,7 +48,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BasicActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends BroadcastActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -89,13 +90,6 @@ public class LoginActivity extends BasicActivity implements LoaderCallbacks<Curs
         setContentView(R.layout.activity_login);
         Log.i(logTag,Boolean.toString(isLogin));
         /**
-         * registe broadcast
-         */
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance( this );
-        MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver() ;
-        IntentFilter intentFilter = new IntentFilter( "Log_in") ;
-        localBroadcastManager.registerReceiver( broadcastReceiver , intentFilter );
-        /**
          * Set up the login form.
          */
         mPhoneNumView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -133,6 +127,31 @@ public class LoginActivity extends BasicActivity implements LoaderCallbacks<Curs
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+    }
+
+    /**
+     * override broadcastreceiver
+     * @param context
+     * @param intent
+     */
+    @Override
+    protected void onReceive(Context context, Intent intent) {
+        if (intent.getIntExtra("code",-1) != -1){
+            Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
+            isLogin = true;
+            startActivity(nextIntent);
+        }else{
+            Toast.makeText(LoginActivity.this, "用户名或密码错误",Toast.LENGTH_SHORT);
+        }
+    }
+
+    /**
+     * set broadcastreceiver filter
+     * @return
+     */
+    @Override
+    protected String getFilter() {
+        return "Log_in";
     }
 
     /**
@@ -225,21 +244,6 @@ public class LoginActivity extends BasicActivity implements LoaderCallbacks<Curs
         intent.putExtra("phonenum", mPhoneNumView.getText().toString());
         intent.putExtra("password", mPasswordView.getText().toString());
         startService(intent);
-
-    }
-
-    private class MyBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getIntExtra("code",-1) != -1){
-                Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
-                isLogin = true;
-                startActivity(nextIntent);
-            }else{
-                Toast.makeText(LoginActivity.this, "用户名或密码错误",Toast.LENGTH_SHORT);
-            }
-        }
 
     }
 

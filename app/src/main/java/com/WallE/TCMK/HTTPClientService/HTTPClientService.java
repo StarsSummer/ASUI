@@ -42,7 +42,7 @@ public class HTTPClientService extends IntentService {
     public static final int INSERT = 9;
 
     private static HttpClient httpClient = new HttpClient("","","");
-    private static Connection connection;
+    private static Connection connection = null;
 
     private static String logTag = "httpClientservice";
 
@@ -77,7 +77,8 @@ public class HTTPClientService extends IntentService {
                 }
                 break;
             case INIT_CHAT:
-                connection.initChat();
+                if(connection != null)
+                    connection.initChat();
                 break;
             case SEND_MESSAGE:
                 connection.send(intent.getStringExtra("message"));

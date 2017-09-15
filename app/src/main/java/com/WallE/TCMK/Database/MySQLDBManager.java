@@ -47,59 +47,60 @@ public class MySQLDBManager {
      */
 
     public static List<?> query(SQLiteDatabase db, String sql, String[] selectionArgs,  Class<?> clazz){
-        Cursor cursor = null;
-        List<Object> list = new ArrayList<>();
+        List<Object> list = null;
         if(db != null){
             /**
              * select cursor
              */
-            cursor = db.rawQuery(sql, selectionArgs);
-            /**
-             * insert to list
-             */
-            if(User.class.equals(clazz)) {
-                while (cursor.moveToNext()) {
-                    int code = cursor.getInt(cursor.getColumnIndex(Constant.USER_CODE));
-                    String userAccount = cursor.getString(cursor.getColumnIndex(Constant.USER_USERACCOUNT));
-                    String userType = cursor.getString(cursor.getColumnIndex(Constant.USER_USERTYPE));
-                    String password = cursor.getString(cursor.getColumnIndex(Constant.USER_PASSWORD));
-                    User user = new User(code, userAccount, userType, password);
-                    list.add(user);
+            Cursor cursor = db.rawQuery(sql, selectionArgs);
+            if(cursor.getCount() != 0){
+                /**
+                 * insert to list
+                 */
+                if(User.class.equals(clazz)) {
+                    while (cursor.moveToNext()) {
+                        int code = cursor.getInt(cursor.getColumnIndex(Constant.USER_CODE));
+                        String userAccount = cursor.getString(cursor.getColumnIndex(Constant.USER_USERACCOUNT));
+                        String userType = cursor.getString(cursor.getColumnIndex(Constant.USER_USERTYPE));
+                        String password = cursor.getString(cursor.getColumnIndex(Constant.USER_PASSWORD));
+                        User user = new User(code, userAccount, userType, password);
+                        list.add(user);
+                    }
+                }else if(DoctorInformation.class.equals(clazz)){
+                    while(cursor.moveToNext()){
+                        int code = cursor.getInt(cursor.getColumnIndex(Constant.DOCTORINFO_CODE));
+                        String dep = cursor.getString(cursor.getColumnIndex(Constant.DOCTORINFO_DEP));
+                        DoctorInformation doctorInformation = new DoctorInformation(code, dep);
+                        list.add(doctorInformation);
+                    }
                 }
-            }else if(DoctorInformation.class.equals(clazz)){
-                while(cursor.moveToNext()){
-                    int code = cursor.getInt(cursor.getColumnIndex(Constant.DOCTORINFO_CODE));
-                    String dep = cursor.getString(cursor.getColumnIndex(Constant.DOCTORINFO_DEP));
-                    DoctorInformation doctorInformation = new DoctorInformation(code, dep);
-                    list.add(doctorInformation);
+                else if(PersonInfo.class.equals(clazz)){
+                    while(cursor.moveToNext()){
+                        int code = cursor.getInt(cursor.getColumnIndex(Constant.PERSONINFO_CODE));
+                        String sex = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_SEX));
+                        String email = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_EMAIL));
+                        byte[] icon = cursor.getBlob(cursor.getColumnIndex(Constant.PERSONINFO_ICON));
+                        Date birthDate = new Date(cursor.getLong(cursor.getColumnIndex(Constant.PERSONINFO_BIRTHDATE)));
+                        String nickname = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_NICKNAME));
+                        list.add(new PersonInfo(code, sex, email, icon, birthDate, nickname));
+                    }
+                }else if(HealthInfo.class.equals(clazz)){
+                    while(cursor.moveToNext()){
+                        int code = cursor.getInt(cursor.getColumnIndex(Constant.HEALTHINFO_CODE));
+                        Date date = new Date(cursor.getLong(cursor.getColumnIndex(Constant.HEALTHINFO_DATE)));
+                        BigDecimal bloodHigh = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_BLOODHIGH)));
+                        BigDecimal bloodLow = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_BLOODLOW)));
+                        BigDecimal height = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_HEIGHT)));
+                        BigDecimal weight = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_WEIGHT)));
+                        list.add(new HealthInfo(new HealthInfoId(code, date),bloodHigh, bloodLow, weight, height));
+                    }
+                }else if(Message.class.equals(clazz)){
+                    int senderCode = cursor.getInt(cursor.getColumnIndex(Constant.MESSAGE_SENDERCODE));
+                    int receiverCode = cursor.getInt(cursor.getColumnIndex(Constant.MESSAGE_RECEIVERCODE));
+                    Date date = new Date(cursor.getLong(cursor.getColumnIndex(Constant.MESSAGE_DATE)));
+                    String message = cursor.getString(cursor.getColumnIndex(Constant.MESSAGE_MESSAGE));
+                    list.add(new Message(senderCode, receiverCode, message, date));
                 }
-            }
-            else if(PersonInfo.class.equals(clazz)){
-                while(cursor.moveToNext()){
-                    int code = cursor.getInt(cursor.getColumnIndex(Constant.PERSONINFO_CODE));
-                    String sex = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_SEX));
-                    String email = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_EMAIL));
-                    byte[] icon = cursor.getBlob(cursor.getColumnIndex(Constant.PERSONINFO_ICON));
-                    Date birthDate = new Date(cursor.getLong(cursor.getColumnIndex(Constant.PERSONINFO_BIRTHDATE)));
-                    String nickname = cursor.getString(cursor.getColumnIndex(Constant.PERSONINFO_NICKNAME));
-                    list.add(new PersonInfo(code, sex, email, icon, birthDate, nickname));
-                }
-            }else if(HealthInfo.class.equals(clazz)){
-                while(cursor.moveToNext()){
-                    int code = cursor.getInt(cursor.getColumnIndex(Constant.HEALTHINFO_CODE));
-                    Date date = new Date(cursor.getLong(cursor.getColumnIndex(Constant.HEALTHINFO_DATE)));
-                    BigDecimal bloodHigh = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_BLOODHIGH)));
-                    BigDecimal bloodLow = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_BLOODLOW)));
-                    BigDecimal height = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_HEIGHT)));
-                    BigDecimal weight = new BigDecimal(cursor.getDouble(cursor.getColumnIndex(Constant.HEALTHINFO_WEIGHT)));
-                    list.add(new HealthInfo(new HealthInfoId(code, date),bloodHigh, bloodLow, weight, height));
-                }
-            }else if(Message.class.equals(clazz)){
-                int senderCode = cursor.getInt(cursor.getColumnIndex(Constant.MESSAGE_SENDERCODE));
-                int receiverCode = cursor.getInt(cursor.getColumnIndex(Constant.MESSAGE_RECEIVERCODE));
-                Date date = new Date(cursor.getLong(cursor.getColumnIndex(Constant.MESSAGE_DATE)));
-                String message = cursor.getString(cursor.getColumnIndex(Constant.MESSAGE_MESSAGE));
-                list.add(new Message(senderCode, receiverCode, message, date));
             }
         }
         return list;

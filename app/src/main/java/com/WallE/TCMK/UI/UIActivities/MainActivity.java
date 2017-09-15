@@ -109,6 +109,7 @@ public class MainActivity extends BasicActivity {
                         editor.putBoolean("client_status", false);
                         editor.putInt("code", -1);
                         editor.commit();
+                        HTTPClientService.setUserCode(-1);
                         MainActivity.this.finish();
                     }
                 });
