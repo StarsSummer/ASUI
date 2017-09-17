@@ -1,9 +1,12 @@
 package com.WallE.TCMK.UI.UIActivities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.WallE.TCMK.R;
 
@@ -19,7 +22,9 @@ public class FoodActivity extends AppCompatActivity{
         WebView webview = (WebView) findViewById(R.id.food_web);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
-        webview.loadUrl("file:///android_asset/1.html");
+        Intent getfood =getIntent();
+        String link = getfood.getStringExtra("link");
+        webview.loadUrl(link);
     }
 
 }

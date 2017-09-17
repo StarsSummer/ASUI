@@ -21,8 +21,8 @@ public class GoodActivity extends AppCompatActivity{
         WebView webview = (WebView) findViewById(R.id.good_web);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
-        Intent getfoodno =getIntent();
-        String link= getfoodno.getStringExtra("link");
+        Intent getgood =getIntent();
+        String link= getgood.getStringExtra("link");
         webview.loadUrl(link);
     }
 

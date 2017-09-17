@@ -1,5 +1,6 @@
 package com.WallE.TCMK.UI.MainFragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -7,10 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 
+import com.WallE.TCMK.R;
 import com.WallE.TCMK.Utils.Food;
 import com.WallE.TCMK.Utils.FoodAdapter;
-import com.WallE.TCMK.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,12 @@ public class FoodFrag extends Fragment {
 
     private void initfoods(){
         fruitList.clear();
-        Food food1=new Food("薏米粥",R.drawable.food_image_a);
-        Food food2=new Food("桂圆百合莲子",R.drawable.food_image_b);
-        Food food3=new Food("川贝蒸梨",R.drawable.food_image_c);
-        Food food4=new Food("酸奶",R.drawable.food_image_d);
-        Food food5=new Food("核桃",R.drawable.food_image_e);
-        Food food6=new Food("羊肉汤",R.drawable.food_image_f);
+        Food food1=new Food("薏米粥",R.drawable.food_image_a,"http://m.meishichina.com/recipe/3786/");
+        Food food2=new Food("桂圆百合莲子",R.drawable.food_image_b,"http://m.meishichina.com/recipe/66896/");
+        Food food3=new Food("川贝蒸梨",R.drawable.food_image_c,"http://m.meishichina.com/recipe/77287/");
+        Food food4=new Food("酸奶",R.drawable.food_image_d,"http://m.meishichina.com/recipe/25162/");
+        Food food5=new Food("核桃",R.drawable.food_image_e,"http://m.meishichina.com/recipe/47548/");
+        Food food6=new Food("羊肉汤",R.drawable.food_image_f,"http://m.meishichina.com/recipe/45823/");
         fruitList.add(food1);
         fruitList.add(food2);
         fruitList.add(food3);

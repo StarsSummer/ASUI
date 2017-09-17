@@ -52,6 +52,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
                 int position = holder.getAdapterPosition();
                 Food food = mfoodList.get(position);
                 Intent introduce = new Intent(mContext,FoodActivity.class);
+                introduce.putExtra("link",food.getFoodurl());
                 mContext.startActivity(introduce);
             }
         });
