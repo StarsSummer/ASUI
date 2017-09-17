@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.WallE.TCMK.UI.Base.BasicActivity;
 import com.WallE.TCMK.Utils.Msg;
-import com.WallE.TCMK.UI.MainFragments.MsgAdapter;
+import com.WallE.TCMK.Utils.MsgAdapter;
 import com.WallE.TCMK.R;
 
 

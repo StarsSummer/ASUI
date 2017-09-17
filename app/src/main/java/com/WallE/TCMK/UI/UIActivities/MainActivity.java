@@ -34,6 +34,7 @@ import com.WallE.TCMK.UI.MainFragments.ChatFrag;
 import com.WallE.TCMK.UI.MainFragments.FoodFrag;
 import com.WallE.TCMK.UI.MainFragments.HeartFrag;
 import com.WallE.TCMK.R;
+import com.WallE.TCMK.UI.MainFragments.ShopFrag;
 import com.WallE.TCMK.Utils.Title;
 import com.WallE.TCMK.Utils.TitleAdapter;
 import com.WallE.TCMK.UI.MainFragments.TongueFrag;
@@ -172,18 +173,22 @@ public class MainActivity extends BasicActivity {
                         fm.beginTransaction().replace(R.id.Content,fms.get(3),"t3").commit();
                         bartitle.setText("听息断形");
                         break;
+
                     case 4:
                         fm.beginTransaction().replace(R.id.Content,fms.get(4),"t4").commit();
                         bartitle.setText("方案推荐");
                         break;
-                    /*
+
                     case 5:
-                        bartitle.setText("分享交流");
-                        break;*/
-                    case 6:
                         fm.beginTransaction().replace(R.id.Content,fms.get(5),"t5").commit();
+                        bartitle.setText("健康商城");
+                        break;
+
+                    case 6:
+                        fm.beginTransaction().replace(R.id.Content,fms.get(6),"t6").commit();
                         bartitle.setText("循症疑难");
                         break;
+
                 }
             }
         });
@@ -206,20 +211,19 @@ public class MainActivity extends BasicActivity {
         Title heart=new Title("辨晓经脉",R.drawable.ic_heart,0XFF6bc08b);
         Title voice=new Title("听息短形",R.drawable.ic_voice,0XFF3eb279);
         Title food=new Title("方案推荐",R.drawable.ic_food,0XFF6bc08b);
-        Title share=new Title("分享交流",R.drawable.ic_share,0XFF3eb279);
+        Title shop=new Title("健康商城",R.drawable.ic_shop,0XFF3eb279);
         Title ask=new Title("循症疑难",R.drawable.ic_ask,0XFF6bc08b);
         titles.add(center);
         titles.add(tongue);
         titles.add(heart);
         titles.add(voice);
         titles.add(food);
-        titles.add(share);
+        titles.add(shop);
         titles.add(ask);
 
     }
 
     private void initFragments(){
-
         CenterFrag centerFragment =new CenterFrag();
         fms.add(centerFragment);
         TongueFrag tongueFragment=new TongueFrag();
@@ -230,6 +234,8 @@ public class MainActivity extends BasicActivity {
         fms.add(voicefragment);
         FoodFrag foodFragment=new FoodFrag();
         fms.add(foodFragment);
+        ShopFrag shopFragment=new ShopFrag();
+        fms.add(shopFragment);
         ChatFrag chatFragment=new ChatFrag();
         fms.add(chatFragment);
         //fm.beginTransaction().replace(R.id.Content,fms.get(0),"t0").commit();
