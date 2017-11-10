@@ -46,9 +46,9 @@ public class HttpClient {
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
     //address
-    private String ip = "10.206.11.2";
-    private String port = "8080";
-    private String projectname = "caffe";
+    private String ip;
+    private String port ;
+    private String projectname;
     //find user in database"
 
     private OkHttpClient client;
@@ -148,6 +148,27 @@ public class HttpClient {
         builder.addFormDataPart("time",dgson);
         Request request = new Request.Builder()
                 .url("http://" +  ip + ":" + port + "/" + projectname + "/TongueAnalysis")//url of server
+                .post(builder.build())
+                .build();
+        //request will enqueue to send
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code: " + response);
+        String result = gson.fromJson(response.body().charStream(), String.class);
+        return result;
+    }
+    String pulseJudge(String path, int userCode) throws IOException {
+
+        File image = new File(path);
+        Date date = new Date();
+        //cover with json
+        String dgson = gson.toJson(date);
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        RequestBody fileBody = RequestBody.create(MEDIA_TYPE_JPG, image);
+        builder.addFormDataPart("uploadfile", image.getName(), fileBody);
+        builder.addFormDataPart("code", Integer.toString(userCode));
+        builder.addFormDataPart("time",dgson);
+        Request request = new Request.Builder()
+                .url("http://" +  ip + ":" + port + "/" + projectname + "/MAiAnalysis")//url of server
                 .post(builder.build())
                 .build();
         //request will enqueue to send

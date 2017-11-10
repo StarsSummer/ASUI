@@ -40,8 +40,11 @@ public class HTTPClientService extends IntentService {
     public static final int QUERY = 7;
     public static final int UPDATE = 8;
     public static final int INSERT = 9;
+    public static final int PULSE_JUDGE = 10;
 
-    private static HttpClient httpClient = new HttpClient("","","");
+    public static final String PULSE_RESULT = "pulse_result";
+
+    private static HttpClient httpClient = new HttpClient("[2001:da8:215:c658:2bb:a19d:4388:4981]","8080","caffe");
     private static Connection connection = null;
 
     private static String logTag = "httpClientservice";
@@ -113,6 +116,13 @@ public class HTTPClientService extends IntentService {
                     setInsert(intent.getSerializableExtra("Object"));
                 } catch (HttpException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PULSE_JUDGE:
+                try {
+                    setPulseJudge(intent.getStringExtra("File"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -273,6 +283,25 @@ public class HTTPClientService extends IntentService {
         Log.i(logTag, result);
         Intent intent = new Intent();
         intent.setAction("Result");
+        intent.putExtra("result",result);
+        bm.sendBroadcast(intent);
+    }
+    private void setPulseJudge(String path) throws Exception {
+        String result;
+        /**
+         * permission check
+         */
+        if(userCode > USER_STATUS_DEFAULT){
+            result = httpClient.pulseJudge(path, userCode);
+        }
+        else if (userCode == USER_STATUS_TEST){
+            result = "OK";
+        }else
+            throw new Exception("Wrong user");
+
+        Log.i(logTag, result);
+        Intent intent = new Intent();
+        intent.setAction(PULSE_RESULT);
         intent.putExtra("result",result);
         bm.sendBroadcast(intent);
     }

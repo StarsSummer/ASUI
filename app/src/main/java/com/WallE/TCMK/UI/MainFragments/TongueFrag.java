@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.WallE.TCMK.HTTPClientService.HTTPClientService;
 import com.WallE.TCMK.R;
 
 import java.io.File;
@@ -69,7 +70,7 @@ public class TongueFrag extends Fragment{
                 Intent intent = new Intent();
                 intent.setAction("intent_service");
                 intent.setPackage(getActivity().getPackageName());
-                intent.putExtra("param",6);
+                intent.putExtra("param", HTTPClientService.TONGUE_JUDGE);
                 intent.putExtra("File",copeUri.getPath());
                 getActivity().startService(intent);
                 Toast.makeText(getActivity(),"图片已保存，解析中...",Toast.LENGTH_LONG).show();

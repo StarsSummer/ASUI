@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.WallE.TCMK.HTTPClientService.HTTPClientService;
-import com.WallE.TCMK.HTTPClientService.HttpClient;
 import com.WallE.TCMK.UI.Base.BasicActivity;
 import com.WallE.TCMK.UI.MainFragments.CenterFrag;
 import com.WallE.TCMK.UI.MainFragments.ChatFrag;
@@ -38,7 +37,7 @@ import com.WallE.TCMK.UI.MainFragments.ShopFrag;
 import com.WallE.TCMK.Utils.Title;
 import com.WallE.TCMK.Utils.TitleAdapter;
 import com.WallE.TCMK.UI.MainFragments.TongueFrag;
-import com.WallE.TCMK.UI.MainFragments.VoiceFrag;
+import com.WallE.TCMK.UI.MainFragments.PulseFrag;
 
 public class MainActivity extends BasicActivity {
     private DrawerLayout dl;
@@ -230,7 +229,7 @@ public class MainActivity extends BasicActivity {
         fms.add(tongueFragment);
         HeartFrag heartFragment =new HeartFrag();
         fms.add(heartFragment);
-        VoiceFrag voicefragment=new VoiceFrag();
+        PulseFrag voicefragment=new PulseFrag();
         fms.add(voicefragment);
         FoodFrag foodFragment=new FoodFrag();
         fms.add(foodFragment);
